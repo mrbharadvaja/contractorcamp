@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBRU Camp Comprehensive Guide</title>
+    <style>
+        :root {
+            --primary-blue: #003366; /* JGC Corporate Blue */
+            --mustard-yellow: #E1AD01; /* Mustard */
+            --shining-green: #00FF7F; /* Shining Green */
+            --white: #ffffff;
+            --paper: #fdfdfd;
+            --text-dark: #333;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a; /* Dark background for contrast */
+            font-family: 'Segoe UI', 'Noto Sans', 'Noto Sans AR', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans Devanagari', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Language Bar */
+        .lang-bar {
+            position: absolute;
+            top: 20px;
+            z-index: 100;
+            background: rgba(0,0,0,0.8);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid var(--mustard-yellow);
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .lang-btn {
+            background: transparent;
+            color: white;
+            border: 1px solid #555;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .lang-btn:hover, .lang-btn.active {
+            background: var(--mustard-yellow);
+            color: var(--primary-blue);
+            border-color: var(--mustard-yellow);
+            font-weight: bold;
+            transform: scale(1.05);
+        }
+
+        /* 3D Scene */
+        .scene {
+            width: 1000px;
+            height: 650px;
+            perspective: 2500px;
+            position: relative;
+        }
+
+        .book {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        /* Page Structure */
+        .page {
+            width: 50%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+            border-radius: 0 12px 12px 0;
+            background: var(--paper);
+        }
+
+        .flipped {
+            transform: rotateY(-180deg);
+        }
+
+        /* Content Sides */
+        .page-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            overflow: hidden;
+            box-shadow: inset 10px 0 20px rgba(0,0,0,0.1); /* Spine shadow */
+        }
+
+        .front { z-index: 2; }
+        .back { 
+            transform: rotateY(180deg); 
+            z-index: 1; 
+            border-radius: 12px 0 0 12px;
+            box-shadow: inset -10px 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* RTL Support */
+        .rtl-layout { direction: rtl; text-align: right; }
+        .rtl-layout ul { padding-right: 20px; padding-left: 0; }
+        .rtl-layout .highlight-box { border-left: none; border-right: 5px solid var(--primary-blue); }
+        .rtl-layout .warning-box { border-left: none; border-right: 5px solid #d9534f; }
+
+        /* Typography & Design */
+        .content-padding { padding: 40px; height: 100%; overflow-y: auto; color: var(--text-dark); }
+
+        h1 { font-size: 2.2rem; color: var(--primary-blue); border-bottom: 4px solid var(--mustard-yellow); padding-bottom: 10px; margin-top: 0; }
+        h2 { font-size: 1.6rem; color: var(--primary-blue); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        h3 { background: var(--primary-blue); color: var(--mustard-yellow); display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 1rem; margin-bottom: 5px; margin-top: 15px; }
+        
+        p, li { font-size: 1rem; line-height: 1.6; color: #444; margin-bottom: 8px; }
+
+        /* Special Boxes */
+        .highlight-box { background: rgba(0, 51, 102, 0.05); border-left: 5px solid var(--primary-blue); padding: 15px; margin: 15px 0; border-radius: 4px; }
+        .warning-box { background: rgba(217, 83, 79, 0.05); border-left: 5px solid #d9534f; padding: 15px; margin: 15px 0; border-radius: 4px; }
+        
+        /* Shining Animation */
+        .shine-text { color: #00b300; text-shadow: 0 0 10px rgba(0,255,127,0.3); font-weight: bold; background: #e6ffe6; padding: 2px 5px; border-radius: 3px; }
+        
+        .nav-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: var(--shining-green);
+            color: #003300;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--shining-green);
+            animation: pulse 2s infinite;
+            z-index: 10;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .back .nav-btn { right: auto; left: 30px; }
+        .rtl-layout .nav-btn { right: auto; left: 30px; } /* Flip button for RTL */
+        .rtl-layout .back .nav-btn { left: auto; right: 30px; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 127, 0.7); transform: scale(1); }
+            50% { box-shadow: 0 0 0 10px rgba(0, 255, 127, 0); transform: scale(1.05); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 127, 0); transform: scale(1); }
+        }
+
+        /* Cover Page */
+        .cover {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #001a33 100%);
+            color: white;
+            text-align: center;
+            justify-content: center;
+            border: 5px solid var(--mustard-yellow);
+        }
+        .cover h1 { color: white; border: none; text-shadow: 0 4px 10px rgba(0,0,0,0.5); font-size: 3rem; margin-bottom: 0; }
+        .cover p { color: #ccc; font-size: 1.1rem; }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--mustard-yellow); letter-spacing: 2px; margin-bottom: 20px; border-bottom: 2px solid var(--mustard-yellow); display: inline-block; padding-bottom: 5px; }
+
+        /* Z-Indexing Stack */
+        #p1 { z-index: 4; }
+        #p2 { z-index: 3; }
+        #p3 { z-index: 2; }
+    </style>
+</head>
+<body>
+
+    <div class="lang-bar">
+        <button class="lang-btn active" onclick="setLanguage('en')">English</button>
+        <button class="lang-btn" onclick="setLanguage('ar')">العربية</button>
+        <button class="lang-btn" onclick="setLanguage('ko')">한국어</button>
+        <button class="lang-btn" onclick="setLanguage('ja')">日本語</button>
+        <button class="lang-btn" onclick="setLanguage('hi')">हिंदी</button>
+    </div>
+
+    <div class="scene">
+        <div class="book" id="book">
+
+            <div class="page" id="p1">
+                <div class="page-face front cover">
+                    <div class="logo">JGC CORPORATION | HYUNDAI E&C</div>
+                    <h1 id="cover-title">CAMP RULES & REGULATIONS</h1>
+                    <div style="width:150px; height:5px; background:var(--shining-green); margin: 20px auto; box-shadow: 0 0 15px var(--shining-green);"></div>
+                    <p id="cover-subtitle">Basrah Refinery Upgrading Project</p>
+                    <p id="cover-desc">Orientation Guide for New Occupants</p>
+                    <button class="nav-btn" onclick="flipNext(1)" id="btn-start">OPEN GUIDE</button>
+                    [cite_start]<div style="margin-top:40px; font-size: 0.8rem; color: #888;">Sources: [cite: 61, 211]</div>
+                </div>
+                <div class="page-face back">
+                    <div class="content-padding" id="page1-content">
+                        </div>
+                    <button class="nav-btn" onclick="flipPrev(1)" id="btn-back1">BACK</button>
+                </div>
+            </div>
+
+            <div class="page" id="p2">
+                <div class="page-face front">
+                    <div class="content-padding" id="page2-content">
+                         </div>
+                    <button class="nav-btn" onclick="flipNext(2)" id="btn-next2">NEXT</button>
+                </div>
+                <div class="page-face back">
+                    <div class="content-padding" id="page3-content">
+                         </div>
+                    <button class="nav-btn" onclick="flipPrev(2)" id="btn-back2">BACK</button>
+                </div>
+            </div>
+
+            <div class="page" id="p3">
+                <div class="page-face front">
+                    <div class="content-padding" id="page4-content">
+                         </div>
+                    <button class="nav-btn" onclick="flipNext(3)" id="btn-next3">CONTACTS</button>
+                </div>
+                <div class="page-face back">
+                    <div class="content-padding" id="page5-content">
+                         </div>
+                    <button class="nav-btn" onclick="flipPrev(3)" id="btn-back3">BACK</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+    // --- CONTENT DATA SOURCE ---
+    const content = {
+        en: {
+            title: "CAMP RULES & REGULATIONS",
+            subtitle: "Basrah Refinery Upgrading Project",
+            desc: "Orientation Guide for New Occupants",
+            btnStart: "OPEN GUIDE",
+            btnNext: "NEXT",
+            btnBack: "BACK",
+            p1: `
+                <h2>1. Welcome & Entry</h2>
+                [cite_start]<div class="highlight-box">"This Camp is your home away from home." [cite: 62]</div>
+                <h3>Identification</h3>
+                <ul>
+                    <li>Always carry your <strong>Project ID Card</strong>. [cite_start]It authorizes access to Camp and Dining[cite: 65].</li>
+                    [cite_start]<li>You may be asked to present ID by Security or Camp Staff[cite: 66].</li>
+                </ul>
+                <h3>Check-In Policy</h3>
+                <ul>
+                    [cite_start]<li>Residents sign a receipt for furniture upon arrival[cite: 67].</li>
+                    <li><strong>Keys:</strong> Do not lend keys. [cite_start]Lost key penalty: USD 5.00 - 10.00[cite: 120, 222].</li>
+                    [cite_start]<li>Check-in/out is available 24 hours[cite: 314].</li>
+                </ul>
+            `,
+            p2: `
+                <h2>2. Room Rules</h2>
+                <h3>Prohibited Actions</h3>
+                <div class="warning-box">
+                    <ul>
+                        [cite_start]<li><strong>No Cooking:</strong> Hotplates, burners, and candles are strictly prohibited in rooms[cite: 153].</li>
+                        [cite_start]<li><strong>Modifications:</strong> No nails, stickers, or electrical changes to walls[cite: 146, 148].</li>
+                        <li><strong>Laundry:</strong> Washing clothes in bathrooms is prohibited. [cite_start]Use the Laundry Service[cite: 99].</li>
+                    </ul>
+                </div>
+                <h3>Noise & Conduct</h3>
+                <p>Quiet must be maintained. Nightshift workers sleep during the day. [cite_start]Excessive noise is not tolerated[cite: 73, 74].</p>
+            `,
+            p3: `
+                <h2>3. Services & Facilities</h2>
+                <h3>Dining Hall</h3>
+                <p>Meals provided with ID. [cite_start]<strong>Rule:</strong> No food, plates, or cutlery to be removed from the dining room[cite: 104, 105].</p>
+                
+                <h3>Laundry Schedule</h3>
+                <ul>
+                    [cite_start]<li><strong>Contractor Camp:</strong> Collect 6AM-8AM / Return 4PM-5PM[cite: 326].</li>
+                    [cite_start]<li><strong>Subcontractor Camp:</strong> Drop off 6AM-8AM / Return 4PM-5PM[cite: 327].</li>
+                </ul>
+
+                <h3>Connectivity & Recreation</h3>
+                <ul>
+                    [cite_start]<li><strong>WiFi Code:</strong> <span class="shine-text">ibru2022@</span> [cite: 323]</li>
+                    [cite_start]<li>Facilities: Gym, Billiards, Indoor Golf, Barber Shop[cite: 318].</li>
+                </ul>
+            `,
+            p4: `
+                <h2>4. Safety & Emergency</h2>
+                <div class="warning-box" style="text-align:center;">
+                    <strong>EMERGENCY HOTLINE</strong><br>
+                    [cite_start]<span style="font-size:1.5rem; color:red;">078-1133-3772</span> [cite: 290]
+                </div>
+                <h3>Fire Safety</h3>
+                <ul>
+                    <li>Do not tamper with Smoke Detectors or Extinguishers. [cite_start]Result: Immediate Expulsion[cite: 114].</li>
+                    <li><strong>Smoking:</strong> Strictly prohibited inside buildings. [cite_start]Use designated areas only[cite: 115].</li>
+                </ul>
+                <h3>Medical</h3>
+                <p>Clinic available 24/7. Referrals require Camp Manager confirmation. [cite_start]Consumables may be deducted from subcontractor payment[cite: 300, 302].</p>
+            `,
+            p5: `
+                <h2>5. Contacts</h2>
+                [cite_start]<p><strong>Camp Maintenance:</strong> 6AM - 5PM (Repair crews available 24/7) [cite: 312, 314]</p>
+                
+                <table style="width:100%; border-collapse: collapse; margin-top:10px;">
+                    <tr style="background:#ddd;"><td style="padding:5px;"><strong>Role</strong></td><td style="padding:5px;"><strong>Name / Number</strong></td></tr>
+                    <tr><td style="padding:5px;">Day Shift</td><td style="padding:5px;">Mr. [cite_start]Deepak (0780-989-0645) [cite: 248]</td></tr>
+                    <tr><td style="padding:5px;">Night Shift</td><td style="padding:5px;">Mr. [cite_start]Singh (0783-354-8547) [cite: 248]</td></tr>
+                    <tr><td style="padding:5px;">Subcon Camp</td><td style="padding:5px;">Mr. [cite_start]Irfan (0785-004-8715) [cite: 248]</td></tr>
+                </table>
+                <div class="highlight-box" style="text-align:center; margin-top:20px;">
+                    <h3 style="background:none; color:var(--primary-blue);">HAVE A SAFE STAY!</h3>
+                </div>
+            `
+        },
+        ar: {
+            title: "قواعد وأنظمة المخيم",
+            subtitle: "مشروع تحديث مصفاة البصرة",
+            desc: "دليل توجيهي للمقيمين الجدد",
+            btnStart: "افتح الدليل",
+            btnNext: "التالي",
+            btnBack: "رجوع",
+            p1: `
+                <h2>1. الترحيب والدخول</h2>
+                [cite_start]<div class="highlight-box">"هذا المخيم هو منزلك بعيداً عن المنزل." [cite: 62]</div>
+                <h3>الهوية والدخول</h3>
+                <ul>
+                    <li>احمل دائمًا <strong>بطاقة هوية المشروع</strong>. [cite_start]فهي تسمح بالدخول للمخيم والمطعم[cite: 65].</li>
+                    [cite_start]<li>قد يُطلب منك إبراز الهوية من قبل الأمن[cite: 66].</li>
+                </ul>
+                <h3>إجراءات تسجيل الدخول</h3>
+                <ul>
+                    [cite_start]<li>يوقع المقيمون على استلام الأثاث عند الوصول[cite: 67].</li>
+                    <li><strong>المفاتيح:</strong> لا تقم بإعارة المفاتيح. [cite_start]غرامة فقدان المفتاح: 5 - 10 دولار[cite: 120, 222].</li>
+                </ul>
+            `,
+            p2: `
+                <h2>2. قواعد الغرف</h2>
+                <h3>الأعمال المحظورة</h3>
+                <div class="warning-box">
+                    <ul>
+                        [cite_start]<li><strong>الطبخ ممنوع:</strong> يُمنع استخدام السخانات والشموع داخل الغرف تماماً[cite: 153].</li>
+                        [cite_start]<li><strong>التعديلات:</strong> ممنوع استخدام المسامير أو الملصقات على الجدران[cite: 148].</li>
+                        <li><strong>الغسيل:</strong> يُمنع غسل الملابس في الحمامات. [cite_start]استخدم خدمة الغسيل[cite: 99].</li>
+                    </ul>
+                </div>
+                <h3>الضوضاء والسلوك</h3>
+                <p>يجب الحفاظ على الهدوء. [cite_start]عمال المناوبة الليلية ينامون أثناء النهار[cite: 74].</p>
+            `,
+            p3: `
+                <h2>3. الخدمات والمرافق</h2>
+                <h3>قاعة الطعام</h3>
+                <p>الوجبات تقدم بالهوية. [cite_start]<strong>قاعدة:</strong> يمنع إخراج الطعام أو الأطباق من قاعة الطعام[cite: 104].</p>
+                
+                <h3>خدمة الغسيل</h3>
+                <ul>
+                    [cite_start]<li><strong>مخيم المقاول:</strong> الاستلام 6-8 صباحاً / الإعادة 4-5 مساءً[cite: 326].</li>
+                </ul>
+
+                <h3>الاتصال والترفيه</h3>
+                <ul>
+                    [cite_start]<li><strong>رمز الواي فاي:</strong> <span class="shine-text">ibru2022@</span> [cite: 323]</li>
+                    [cite_start]<li>المرافق: صالة ألعاب رياضية، بلياردو، حلاق[cite: 318].</li>
+                </ul>
+            `,
+            p4: `
+                <h2>4. السلامة والطوارئ</h2>
+                <div class="warning-box" style="text-align:center;">
+                    <strong>خط الطوارئ الساخن</strong><br>
+                    [cite_start]<span style="font-size:1.5rem; color:red;">078-1133-3772</span> [cite: 290]
+                </div>
+                <h3>السلامة من الحرائق</h3>
+                <ul>
+                    <li>لا تعبث بكاشفات الدخان أو الطفايات. [cite_start]النتيجة: الطرد الفوري[cite: 114].</li>
+                    [cite_start]<li><strong>التدخين:</strong> ممنوع تماماً داخل المباني[cite: 115].</li>
+                </ul>
+                <h3>الخدمات الطبية</h3>
+                <p>العيادة متاحة 24/7. [cite_start]الإحالات تتطلب موافقة مدير المخيم[cite: 300].</p>
+            `,
+            p5: `
+                <h2>5. جهات الاتصال</h2>
+                [cite_start]<p><strong>صيانة المخيم:</strong> 6 صباحاً - 5 مساءً [cite: 314]</p>
+                
+                <table style="width:100%; border-collapse: collapse; margin-top:10px;">
+                    <tr style="background:#ddd;"><td style="padding:5px;"><strong>الدور</strong></td><td style="padding:5px;"><strong>الاسم / الرقم</strong></td></tr>
+                    <tr><td style="padding:5px;">الوردية الصباحية</td><td style="padding:5px;">Mr. [cite_start]Deepak (0780-989-0645) [cite: 248]</td></tr>
+                    <tr><td style="padding:5px;">الوردية الليلية</td><td style="padding:5px;">Mr. [cite_start]Singh (0783-354-8547) [cite: 248]</td></tr>
+                </table>
+            `
+        },
+        ko: {
+            title: "캠프 규칙 및 규정",
+            subtitle: "바스라 정유공장 고도화 프로젝트",
+            desc: "신규 입주자를 위한 오리엔테이션 가이드",
+            btnStart: "가이드 열기",
+            btnNext: "다음",
+            btnBack: "뒤로",
+            p1: `
+                <h2>1. 환영 및 입실</h2>
+                [cite_start]<div class="highlight-box">"이 캠프는 여러분의 집과 같습니다." [cite: 62]</div>
+                <h3>신분증 및 출입</h3>
+                <ul>
+                    <li>항상 <strong>프로젝트 ID 카드</strong>를 소지하십시오. [cite_start]캠프 및 식당 출입에 필요합니다[cite: 65].</li>
+                    [cite_start]<li>보안 요원이나 캠프 직원이 ID 제시를 요청할 수 있습니다[cite: 66].</li>
+                </ul>
+                <h3>체크인 정책</h3>
+                <ul>
+                    [cite_start]<li>입주자는 가구/비품 수령증에 서명해야 합니다[cite: 67].</li>
+                    <li><strong>열쇠:</strong> 열쇠를 빌려주지 마십시오. [cite_start]분실 시 벌금: USD 5.00 - 10.00[cite: 120].</li>
+                </ul>
+            `,
+            p2: `
+                <h2>2. 숙소 규칙</h2>
+                <h3>금지 사항</h3>
+                <div class="warning-box">
+                    <ul>
+                        [cite_start]<li><strong>취사 금지:</strong> 객실 내 전열기구, 버너, 양초 사용은 엄격히 금지됩니다[cite: 153].</li>
+                        [cite_start]<li><strong>개조 금지:</strong> 벽에 못, 스티커, 전기 개조 금지[cite: 146].</li>
+                        <li><strong>세탁:</strong> 욕실 내 세탁 금지. [cite_start]지정된 세탁 서비스를 이용하십시오[cite: 99].</li>
+                    </ul>
+                </div>
+                <h3>소음 및 행동</h3>
+                <p>정숙을 유지하십시오. [cite_start]야간 근무자가 낮에 수면을 취할 수 있습니다[cite: 74].</p>
+            `,
+            p3: `
+                <h2>3. 서비스 및 시설</h2>
+                <h3>식당</h3>
+                <p>ID 소지자에게 식사가 제공됩니다. [cite_start]<strong>규칙:</strong> 식당 외부로 음식이나 식기를 반출할 수 없습니다[cite: 104].</p>
+                
+                <h3>세탁 서비스</h3>
+                <ul>
+                    [cite_start]<li><strong>원청 캠프:</strong> 수거 06:00-08:00 / 반납 16:00-17:00[cite: 326].</li>
+                    [cite_start]<li><strong>하청 캠프:</strong> 접수 06:00-08:00 / 반납 16:00-17:00[cite: 327].</li>
+                </ul>
+
+                <h3>인터넷 및 편의시설</h3>
+                <ul>
+                    [cite_start]<li><strong>WiFi 코드:</strong> <span class="shine-text">ibru2022@</span> [cite: 323]</li>
+                    [cite_start]<li>시설: 체육관, 당구장, 실내 골프, 이발소[cite: 318].</li>
+                </ul>
+            `,
+            p4: `
+                <h2>4. 안전 및 비상시</h2>
+                <div class="warning-box" style="text-align:center;">
+                    <strong>비상 핫라인</strong><br>
+                    [cite_start]<span style="font-size:1.5rem; color:red;">078-1133-3772</span> [cite: 290]
+                </div>
+                <h3>화재 안전</h3>
+                <ul>
+                    <li>화재 감지기나 소화기를 조작하지 마십시오. [cite_start]적발 시 즉시 퇴실 조치됩니다[cite: 114].</li>
+                    <li><strong>흡연:</strong> 건물 내 흡연 금지. [cite_start]지정된 구역을 이용하십시오[cite: 115].</li>
+                </ul>
+                <h3>의료 서비스</h3>
+                <p>24시간 클리닉 운영. [cite_start]진료 의뢰 시 캠프 매니저의 확인이 필요합니다[cite: 300].</p>
+            `,
+            p5: `
+                <h2>5. 연락처</h2>
+                [cite_start]<p><strong>캠프 유지보수:</strong> 06:00 - 17:00 [cite: 314]</p>
+                
+                <table style="width:100%; border-collapse: collapse; margin-top:10px;">
+                    <tr style="background:#ddd;"><td style="padding:5px;"><strong>직책</strong></td><td style="padding:5px;"><strong>이름 / 번호</strong></td></tr>
+                    <tr><td style="padding:5px;">주간 근무</td><td style="padding:5px;">Mr. [cite_start]Deepak (0780-989-0645) [cite: 248]</td></tr>
+                    <tr><td style="padding:5px;">야간 근무</td><td style="padding:5px;">Mr. [cite_start]Singh (0783-354-8547) [cite: 248]</td></tr>
+                </table>
+            `
+        },
+        ja: {
+            title: "キャンプルールと規制",
+            subtitle: "バスラ製油所アップグレードプロジェクト",
+            desc: "新規入居者向けオリエンテーションガイド",
+            btnStart: "ガイドを開く",
+            btnNext: "次へ",
+            btnBack: "戻る",
+            p1: `
+                <h2>1. 歓迎と入場</h2>
+                [cite_start]<div class="highlight-box">「このキャンプは、あなたの第二の故郷です。」 [cite: 62]</div>
+                <h3>身分証明とアクセス</h3>
+                <ul>
+                    [cite_start]<li>常に<strong>プロジェクトIDカード</strong>を携帯してください。キャンプおよび食堂へのアクセスに必要です[cite: 65].</li>
+                    [cite_start]<li>警備員やキャンプスタッフからIDの提示を求められることがあります[cite: 66].</li>
+                </ul>
+                <h3>チェックイン方針</h3>
+                <ul>
+                    [cite_start]<li>入居時に家具・備品の受領書に署名が必要です[cite: 67].</li>
+                    [cite_start]<li><strong>鍵:</strong> 鍵の貸し借りは禁止です。紛失時の罰金: USD 5.00 - 10.00[cite: 120].</li>
+                </ul>
+            `,
+            p2: `
+                <h2>2. 部屋のルール</h2>
+                <h3>禁止事項</h3>
+                <div class="warning-box">
+                    <ul>
+                        [cite_start]<li><strong>調理禁止:</strong> 室内でのホットプレート、バーナー、ろうそくの使用は厳禁です[cite: 153].</li>
+                        [cite_start]<li><strong>改造禁止:</strong> 壁への釘打ち、ステッカー、電気設備の改造は禁止です[cite: 146].</li>
+                        [cite_start]<li><strong>洗濯:</strong> バスルームでの洗濯は禁止です。ランドリーサービスを利用してください[cite: 99].</li>
+                    </ul>
+                </div>
+                <h3>騒音と行動</h3>
+                [cite_start]<p>静粛にしてください。夜勤者が日中に睡眠をとっている場合があります[cite: 74].</p>
+            `,
+            p3: `
+                <h2>3. サービスと施設</h2>
+                <h3>食堂</h3>
+                [cite_start]<p>ID所持者に食事が提供されます。<strong>ルール:</strong> 食堂からの食品や食器の持ち出しは禁止です[cite: 104].</p>
+                
+                <h3>ランドリーサービス</h3>
+                <ul>
+                    [cite_start]<li><strong>コントラクターキャンプ:</strong> 回収 06:00-08:00 / 返却 16:00-17:00[cite: 326].</li>
+                    [cite_start]<li><strong>サブコンキャンプ:</strong> 受付 06:00-08:00 / 返却 16:00-17:00[cite: 327].</li>
+                </ul>
+
+                <h3>接続とレクリエーション</h3>
+                <ul>
+                    [cite_start]<li><strong>WiFiコード:</strong> <span class="shine-text">ibru2022@</span> [cite: 323]</li>
+                    [cite_start]<li>施設: ジム、ビリヤード、屋内ゴルフ、理髪店[cite: 318].</li>
+                </ul>
+            `,
+            p4: `
+                <h2>4. 安全と緊急時</h2>
+                <div class="warning-box" style="text-align:center;">
+                    <strong>緊急ホットライン</strong><br>
+                    [cite_start]<span style="font-size:1.5rem; color:red;">078-1133-3772</span> [cite: 290]
+                </div>
+                <h3>火災安全</h3>
+                <ul>
+                    [cite_start]<li>煙探知機や消火器をいじらないでください。違反した場合、即時退去となります[cite: 114].</li>
+                    [cite_start]<li><strong>喫煙:</strong> 建物内は全面禁煙です。指定された場所を使用してください[cite: 115].</li>
+                </ul>
+                <h3>医療サービス</h3>
+                [cite_start]<p>24時間体制のクリニック。受診にはキャンプマネージャーの確認が必要です[cite: 300].</p>
+            `,
+            p5: `
+                <h2>5. 連絡先</h2>
+                [cite_start]<p><strong>キャンプメンテナンス:</strong> 06:00 - 17:00 [cite: 314]</p>
+                
+                <table style="width:100%; border-collapse: collapse; margin-top:10px;">
+                    <tr style="background:#ddd;"><td style="padding:5px;"><strong>役割</strong></td><td style="padding:5px;"><strong>名前 / 番号</strong></td></tr>
+                    <tr><td style="padding:5px;">日勤</td><td style="padding:5px;">Mr. [cite_start]Deepak (0780-989-0645) [cite: 248]</td></tr>
+                    <tr><td style="padding:5px;">夜勤</td><td style="padding:5px;">Mr. [cite_start]Singh (0783-354-8547) [cite: 248]</td></tr>
+                </table>
+            `
+        },
+        hi: {
+            title: "कैंप के नियम और कानून",
+            subtitle: "बसरा रिफाइनरी अपग्रेडिंग प्रोजेक्ट",
+            desc: "नए रहने वालों के लिए गाइड",
+            btnStart: "गाइड खोलें",
+            btnNext: "अगला",
+            btnBack: "पीछे",
+            p1: `
+                <h2>1. स्वागत और प्रवेश</h2>
+                [cite_start]<div class="highlight-box">"यह कैंप घर से दूर आपका घर है।" [cite: 62]</div>
+                <h3>पहचान पत्र (ID)</h3>
+                <ul>
+                    <li>हमेशा अपना <strong>प्रोजेक्ट आईडी कार्ड</strong> साथ रखें। [cite_start]कैंप और डाइनिंग में प्रवेश के लिए यह आवश्यक है[cite: 65].</li>
+                    [cite_start]<li>सुरक्षा गार्ड या कैंप स्टाफ आपसे आईडी मांग सकते हैं[cite: 66].</li>
+                </ul>
+                <h3>चेक-इन नीति</h3>
+                <ul>
+                    [cite_start]<li>निवासियों को फर्नीचर/सामान की रसीद पर हस्ताक्षर करना होगा[cite: 67].</li>
+                    <li><strong>चाबियाँ:</strong> किसी को चाबी उधार न दें। [cite_start]चाबी खोने पर जुर्माना: USD 5.00 - 10.00[cite: 120].</li>
+                </ul>
+            `,
+            p2: `
+                <h2>2. कमरे के नियम</h2>
+                <h3>प्रतिबंधित कार्य</h3>
+                <div class="warning-box">
+                    <ul>
+                        [cite_start]<li><strong>खाना पकाना मना है:</strong> कमरे के अंदर हीटर, बर्नर और मोमबत्तियों का उपयोग सख्त मना है[cite: 153].</li>
+                        [cite_start]<li><strong>बदलाव:</strong> दीवारों पर कील, स्टिकर या बिजली के बदलाव की अनुमति नहीं है[cite: 146].</li>
+                        <li><strong>कपड़े धोना:</strong> बाथरूम में कपड़े धोना मना है। [cite_start]लॉन्ड्री सेवा का उपयोग करें[cite: 99].</li>
+                    </ul>
+                </div>
+                <h3>शोर और व्यवहार</h3>
+                <p>शांति बनाए रखें। नाइट शिफ्ट वाले दिन में सोते हैं। [cite_start]तेज शोर बर्दाश्त नहीं किया जाएगा[cite: 74].</p>
+            `,
+            p3: `
+                <h2>3. सेवाएं और सुविधाएं</h2>
+                <h3>भोजन कक्ष (Dining)</h3>
+                <p>आईडी के साथ भोजन उपलब्ध है। [cite_start]<strong>नियम:</strong> डाइनिंग रूम से खाना या बर्तन बाहर ले जाना मना है[cite: 104].</p>
+                
+                <h3>लॉन्ड्री सेवा</h3>
+                <ul>
+                    [cite_start]<li><strong>कांट्रेक्टर कैंप:</strong> संग्रह 6AM-8AM / वापसी 4PM-5PM[cite: 326].</li>
+                    [cite_start]<li><strong>सब-कांट्रेक्टर कैंप:</strong> जमा 6AM-8AM / वापसी 4PM-5PM[cite: 327].</li>
+                </ul>
+
+                <h3>इंटरनेट और मनोरंजन</h3>
+                <ul>
+                    [cite_start]<li><strong>WiFi कोड:</strong> <span class="shine-text">ibru2022@</span> [cite: 323]</li>
+                    [cite_start]<li>सुविधाएं: जिम, बिलियर्ड्स, इंडोर गोल्फ, नाई की दुकान[cite: 318].</li>
+                </ul>
+            `,
+            p4: `
+                <h2>4. सुरक्षा और आपातकालीन</h2>
+                <div class="warning-box" style="text-align:center;">
+                    <strong>आपातकालीन हॉटलाइन</strong><br>
+                    [cite_start]<span style="font-size:1.5rem; color:red;">078-1133-3772</span> [cite: 290]
+                </div>
+                <h3>अग्नि सुरक्षा</h3>
+                <ul>
+                    <li>स्मोक डिटेक्टर या अग्निशामक यंत्र से छेड़छाड़ न करें। [cite_start]परिणाम: तुरंत निष्कासन[cite: 114].</li>
+                    <li><strong>धूम्रपान:</strong> इमारतों के अंदर सख्त मना है। [cite_start]केवल निर्दिष्ट क्षेत्रों का उपयोग करें[cite: 115].</li>
+                </ul>
+                <h3>चिकित्सा</h3>
+                <p>क्लिनिक 24/7 उपलब्ध है। [cite_start]रेफरल के लिए कैंप मैनेजर की पुष्टि आवश्यक है[cite: 300].</p>
+            `,
+            p5: `
+                <h2>5. संपर्क सूत्र</h2>
+                [cite_start]<p><strong>कैंप रखरखाव:</strong> सुबह 6 बजे - शाम 5 बजे [cite: 314]</p>
+                
+                <table style="width:100%; border-collapse: collapse; margin-top:10px;">
+                    <tr style="background:#ddd;"><td style="padding:5px;"><strong>भूमिका</strong></td><td style="padding:5px;"><strong>नाम / नंबर</strong></td></tr>
+                    <tr><td style="padding:5px;">डे शिफ्ट</td><td style="padding:5px;">Mr. [cite_start]Deepak (0780-989-0645) [cite: 248]</td></tr>
+                    <tr><td style="padding:5px;">नाइट शिफ्ट</td><td style="padding:5px;">Mr. [cite_start]Singh (0783-354-8547) [cite: 248]</td></tr>
+                </table>
+            `
+        }
+    };
+
+    // --- LOGIC ---
+    let currentLang = 'en';
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        
+        // Update Buttons UI
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // Handle RTL for Arabic
+        const pages = document.querySelectorAll('.page-face');
+        if(lang === 'ar') {
+            pages.forEach(p => p.classList.add('rtl-layout'));
+        } else {
+            pages.forEach(p => p.classList.remove('rtl-layout'));
+        }
+
+        // Update Text
+        document.getElementById('cover-title').innerHTML = content[lang].title;
+        document.getElementById('cover-subtitle').innerText = content[lang].subtitle;
+        document.getElementById('cover-desc').innerText = content[lang].desc;
+        document.getElementById('btn-start').innerText = content[lang].btnStart;
+        
+        // Update Content Areas
+        document.getElementById('page1-content').innerHTML = content[lang].p1;
+        document.getElementById('page2-content').innerHTML = content[lang].p2;
+        document.getElementById('page3-content').innerHTML = content[lang].p3;
+        document.getElementById('page4-content').innerHTML = content[lang].p4;
+        document.getElementById('page5-content').innerHTML = content[lang].p5;
+
+        // Update Nav Buttons
+        document.getElementById('btn-back1').innerText = content[lang].btnBack;
+        document.getElementById('btn-next2').innerText = content[lang].btnNext;
+        document.getElementById('btn-back2').innerText = content[lang].btnBack;
+        document.getElementById('btn-next3').innerText = content[lang].title.includes("Contact") ? "CONTACTS" : "CONTACTS"; 
+        document.getElementById('btn-back3').innerText = content[lang].btnBack;
+    }
+
+    // Initialize with English
+    setLanguage('en');
+
+    // Page Flip Logic
+    function flipNext(pageNum) {
+        const page = document.getElementById('p' + pageNum);
+        page.classList.add('flipped');
+        setTimeout(() => { page.style.zIndex = pageNum; }, 200);
+    }
+
+    function flipPrev(pageNum) {
+        const page = document.getElementById('p' + pageNum);
+        page.classList.remove('flipped');
+        setTimeout(() => { page.style.zIndex = 5 - pageNum; }, 200);
+    }
+</script>
+
+</body>
+</html>
