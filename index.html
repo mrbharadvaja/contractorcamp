@@ -2,691 +2,878 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBRU Camp Comprehensive Guide</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Contractor Camp Rules & Guidelines 2026-2027</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Tiro+Devanagari+Hindi&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --primary-blue: #003366; /* JGC Corporate Blue */
-            --mustard-yellow: #E1AD01; /* Mustard */
-            --shining-green: #00FF7F; /* Shining Green */
-            --white: #ffffff;
-            --paper: #fdfdfd;
-            --text-dark: #333;
+            --primary-navy: #002C5F;
+            --primary-blue: #00A3E0;
+            --alert-red: #D32F2F;
+            --bg-gray: #eef1f5;
+            --page-width: 460px; /* Slightly narrower to ensure fit */
+            --page-height: 680px;
+            --anim-speed: 0.8s;
         }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body {
-            margin: 0;
-            padding: 0;
-            background: #1a1a1a; /* Dark background for contrast */
-            font-family: 'Segoe UI', 'Noto Sans', 'Noto Sans AR', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans Devanagari', sans-serif;
+            margin: 0; padding: 0;
+            background-color: var(--bg-gray);
+            font-family: 'Noto Sans', 'Noto Sans JP', 'Noto Sans KR', 'Noto Naskh Arabic', 'Tiro Devanagari Hindi', sans-serif;
+            overflow: hidden; 
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            justify-content: center;
+            padding-top: 35px; /* Offset for Ticker */
         }
 
-        /* Language Bar */
-        .lang-bar {
-            position: absolute;
-            top: 20px;
-            z-index: 100;
-            background: rgba(0,0,0,0.8);
-            padding: 10px 20px;
-            border-radius: 30px;
-            border: 1px solid var(--mustard-yellow);
-            display: flex;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        /* --- SOS TICKER --- */
+        .sos-ticker {
+            position: fixed; top: 0; left: 0; width: 100%; height: 35px;
+            background: var(--alert-red); color: white;
+            z-index: 10000; display: flex; align-items: center;
+            font-weight: bold; font-size: 14px; overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-
-        .lang-btn {
-            background: transparent;
-            color: white;
-            border: 1px solid #555;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            font-weight: 500;
+        .ticker-content {
+            white-space: nowrap;
+            animation: ticker 45s linear infinite; 
+            padding-left: 100%;
+            display: inline-block;
         }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        .lang-btn:hover, .lang-btn.active {
-            background: var(--mustard-yellow);
-            color: var(--primary-blue);
-            border-color: var(--mustard-yellow);
-            font-weight: bold;
-            transform: scale(1.05);
-        }
-
-        /* 3D Scene */
+        /* --- FLIPBOOK SCENE --- */
         .scene {
-            width: 1000px;
-            height: 650px;
+            width: calc(var(--page-width) * 2);
+            height: var(--page-height);
             perspective: 2500px;
             position: relative;
+            transition: transform 0.3s;
+            /* Scale down on smaller desktops if height is issue */
+            max-height: 90vh;
         }
 
         .book {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             position: relative;
             transform-style: preserve-3d;
         }
 
-        /* Page Structure */
-        .page {
-            width: 50%;
-            height: 100%;
+        /* --- PAGES (SHEETS) --- */
+        .sheet {
             position: absolute;
-            top: 0;
-            right: 0;
+            width: var(--page-width);
+            height: 100%;
+            top: 0; left: 50%; 
             transform-origin: left center;
             transform-style: preserve-3d;
-            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-            border-radius: 0 12px 12px 0;
-            background: var(--paper);
+            transition: transform var(--anim-speed) cubic-bezier(0.645, 0.045, 0.355, 1);
+            z-index: 1;
+            cursor: default; /* Remove pointer cursor from whole page */
         }
 
-        .flipped {
+        .sheet.flipped {
             transform: rotateY(-180deg);
         }
 
-        /* Content Sides */
-        .page-face {
+        /* --- FACES --- */
+        .face {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
+            background: white;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05), 0 0 5px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column;
             overflow: hidden;
-            box-shadow: inset 10px 0 20px rgba(0,0,0,0.1); /* Spine shadow */
+            border-radius: 0 4px 4px 0;
         }
 
-        .front { z-index: 2; }
-        .back { 
-            transform: rotateY(180deg); 
-            z-index: 1; 
-            border-radius: 12px 0 0 12px;
-            box-shadow: inset -10px 0 20px rgba(0,0,0,0.1);
+        .face.front { /* Right page */ }
+        
+        .face.back {
+            transform: rotateY(180deg);
+            border-radius: 4px 0 0 4px; /* Left page */
+            background: #fdfdfd;
         }
 
-        /* RTL Support */
-        .rtl-layout { direction: rtl; text-align: right; }
-        .rtl-layout ul { padding-right: 20px; padding-left: 0; }
-        .rtl-layout .highlight-box { border-left: none; border-right: 5px solid var(--primary-blue); }
-        .rtl-layout .warning-box { border-left: none; border-right: 5px solid #d9534f; }
+        /* Spine Shadows */
+        .face.front::after {
+            content: ""; position: absolute; top:0; left:0; bottom:0; width: 12px;
+            background: linear-gradient(to right, rgba(0,0,0,0.15), transparent); pointer-events: none;
+        }
+        .face.back::after {
+            content: ""; position: absolute; top:0; right:0; bottom:0; width: 12px;
+            background: linear-gradient(to left, rgba(0,0,0,0.15), transparent); pointer-events: none;
+        }
 
-        /* Typography & Design */
-        .content-padding { padding: 40px; height: 100%; overflow-y: auto; color: var(--text-dark); }
-
-        h1 { font-size: 2.2rem; color: var(--primary-blue); border-bottom: 4px solid var(--mustard-yellow); padding-bottom: 10px; margin-top: 0; }
-        h2 { font-size: 1.6rem; color: var(--primary-blue); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 5px; }
-        h3 { background: var(--primary-blue); color: var(--mustard-yellow); display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 1rem; margin-bottom: 5px; margin-top: 15px; }
+        /* --- INNER PAGE LAYOUT (Sticky Header/Footer) --- */
+        .page-header-fixed {
+            height: 55px;
+            border-bottom: 1px solid #eee;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 15px; background: #fff;
+            flex-shrink: 0; /* Sticky */
+        }
+        .ph-left { display: flex; align-items: center; gap: 8px; }
+        .ph-logos { display: flex; gap: 5px; }
+        .ph-logo { height: 22px; width: auto; }
+        .ph-text { font-size: 9px; color: #777; line-height: 1.1; display: none; } /* Hidden on small headers, shown if space permits */
         
-        p, li { font-size: 1rem; line-height: 1.6; color: #444; margin-bottom: 8px; }
-
-        /* Special Boxes */
-        .highlight-box { background: rgba(0, 51, 102, 0.05); border-left: 5px solid var(--primary-blue); padding: 15px; margin: 15px 0; border-radius: 4px; }
-        .warning-box { background: rgba(217, 83, 79, 0.05); border-left: 5px solid #d9534f; padding: 15px; margin: 15px 0; border-radius: 4px; }
-        
-        /* Shining Animation */
-        .shine-text { color: #00b300; text-shadow: 0 0 10px rgba(0,255,127,0.3); font-weight: bold; background: #e6ffe6; padding: 2px 5px; border-radius: 3px; }
-        
-        .nav-btn {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            background: var(--shining-green);
-            color: #003300;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 30px;
-            font-weight: 800;
+        /* Language Selector Inside Book */
+        .lang-select-inner {
+            padding: 4px 2px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--primary-navy);
+            background: #f9f9f9;
             cursor: pointer;
-            box-shadow: 0 0 20px var(--shining-green);
-            animation: pulse 2s infinite;
-            z-index: 10;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9rem;
+            max-width: 90px;
         }
 
-        .back .nav-btn { right: auto; left: 30px; }
-        .rtl-layout .nav-btn { right: auto; left: 30px; } /* Flip button for RTL */
-        .rtl-layout .back .nav-btn { left: auto; right: 30px; }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 255, 127, 0.7); transform: scale(1); }
-            50% { box-shadow: 0 0 0 10px rgba(0, 255, 127, 0); transform: scale(1.05); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 255, 127, 0); transform: scale(1); }
+        .page-body {
+            padding: 20px 25px;
+            overflow-y: auto;
+            flex-grow: 1;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        /* Cover Page */
-        .cover {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, #001a33 100%);
-            color: white;
-            text-align: center;
-            justify-content: center;
-            border: 5px solid var(--mustard-yellow);
+        /* Footer Controls */
+        .page-footer {
+            height: 40px; border-top: 1px solid #eee;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 10px; font-size: 11px; color: #555;
+            flex-shrink: 0; background: #fdfdfd;
         }
-        .cover h1 { color: white; border: none; text-shadow: 0 4px 10px rgba(0,0,0,0.5); font-size: 3rem; margin-bottom: 0; }
-        .cover p { color: #ccc; font-size: 1.1rem; }
-        .logo { font-size: 1.5rem; font-weight: bold; color: var(--mustard-yellow); letter-spacing: 2px; margin-bottom: 20px; border-bottom: 2px solid var(--mustard-yellow); display: inline-block; padding-bottom: 5px; }
 
-        /* Z-Indexing Stack */
-        #p1 { z-index: 4; }
-        #p2 { z-index: 3; }
-        #p3 { z-index: 2; }
+        .mini-btn {
+            background: transparent;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-size: 11px;
+            cursor: pointer;
+            color: var(--primary-navy);
+            font-weight: bold;
+            display: flex; align-items: center; gap: 4px;
+            transition: all 0.2s;
+        }
+        .mini-btn:hover { background: #eee; }
+        .mini-btn.home-btn { border-color: transparent; font-size: 14px; }
+        .mini-btn:disabled { opacity: 0.3; cursor: default; }
+
+        /* Typography */
+        h1 { font-size: 18px; color: var(--primary-navy); margin: 0 0 12px 0; border-bottom: 2px solid var(--primary-blue); padding-bottom: 5px; font-weight: 700; }
+        h2 { font-size: 15px; color: var(--primary-navy); margin: 15px 0 8px 0; font-weight: 700; }
+        p { margin-bottom: 10px; }
+        ul, ol { padding-left: 20px; margin: 0 0 10px 0; }
+        li { margin-bottom: 5px; }
+
+        .btn-link {
+            display: block; width: 100%; text-align: center;
+            background: var(--primary-blue); color: white;
+            text-decoration: none; padding: 12px; border-radius: 6px;
+            margin: 8px 0; font-weight: bold; font-size: 13px;
+        }
+        .btn-link:hover { opacity: 0.9; }
+        
+        .table-custom { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 10px; }
+        .table-custom th { background: #f0f4f8; text-align: left; padding: 6px; color: var(--primary-navy); border-bottom: 1px solid #ddd; }
+        .table-custom td { border-bottom: 1px solid #eee; padding: 6px; vertical-align: top; }
+
+        .index-list { list-style: none; padding: 0; }
+        .index-list li {
+            padding: 8px 0; border-bottom: 1px dashed #eee;
+            font-size: 12px; cursor: pointer; color: var(--primary-navy);
+            display: flex; justify-content: space-between;
+        }
+        .index-list li:hover { background: #f9f9f9; color: var(--primary-blue); }
+
+        /* Cover */
+        .cover-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 20px; }
+        .cover-logos { margin-bottom: 40px; }
+        .cover-logos img { height: 50px; margin: 0 10px; }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            :root { --page-width: 92vw; --page-height: 75vh; }
+            .scene { width: var(--page-width); }
+            .sheet { left: 0; transform-origin: center; } /* Stack pages */
+            .sheet.flipped { transform: rotateY(-180deg); opacity: 0; pointer-events: none; }
+            .ph-text { display: none; }
+            .cover-logos img { height: 40px; }
+        }
+
+        [dir="rtl"] { text-align: right; }
+        [dir="rtl"] .ph-left { flex-direction: row; }
+        [dir="rtl"] th { text-align: right; }
+        [dir="rtl"] .mini-btn { flex-direction: row-reverse; }
     </style>
 </head>
 <body>
 
-    <div class="lang-bar">
-        <button class="lang-btn active" onclick="setLanguage('en')">English</button>
-        <button class="lang-btn" onclick="setLanguage('ar')">العربية</button>
-        <button class="lang-btn" onclick="setLanguage('ko')">한국어</button>
-        <button class="lang-btn" onclick="setLanguage('ja')">日本語</button>
-        <button class="lang-btn" onclick="setLanguage('hi')">हिंदी</button>
-    </div>
-
-    <div class="scene">
-        <div class="book" id="book">
-
-            <div class="page" id="p1">
-                <div class="page-face front cover">
-                    <div class="logo">JGC CORPORATION | HYUNDAI E&C</div>
-                    <h1 id="cover-title">CAMP RULES & REGULATIONS</h1>
-                    <div style="width:150px; height:5px; background:var(--shining-green); margin: 20px auto; box-shadow: 0 0 15px var(--shining-green);"></div>
-                    <p id="cover-subtitle">Basrah Refinery Upgrading Project</p>
-                    <p id="cover-desc">Orientation Guide for New Occupants</p>
-                    <button class="nav-btn" onclick="flipNext(1)" id="btn-start">OPEN GUIDE</button>
-                    [cite_start]<div style="margin-top:40px; font-size: 0.8rem; color: #888;">Sources: [cite: 61, 211]</div>
-                </div>
-                <div class="page-face back">
-                    <div class="content-padding" id="page1-content">
-                        </div>
-                    <button class="nav-btn" onclick="flipPrev(1)" id="btn-back1">BACK</button>
-                </div>
-            </div>
-
-            <div class="page" id="p2">
-                <div class="page-face front">
-                    <div class="content-padding" id="page2-content">
-                         </div>
-                    <button class="nav-btn" onclick="flipNext(2)" id="btn-next2">NEXT</button>
-                </div>
-                <div class="page-face back">
-                    <div class="content-padding" id="page3-content">
-                         </div>
-                    <button class="nav-btn" onclick="flipPrev(2)" id="btn-back2">BACK</button>
-                </div>
-            </div>
-
-            <div class="page" id="p3">
-                <div class="page-face front">
-                    <div class="content-padding" id="page4-content">
-                         </div>
-                    <button class="nav-btn" onclick="flipNext(3)" id="btn-next3">CONTACTS</button>
-                </div>
-                <div class="page-face back">
-                    <div class="content-padding" id="page5-content">
-                         </div>
-                    <button class="nav-btn" onclick="flipPrev(3)" id="btn-back3">BACK</button>
-                </div>
-            </div>
-
+    <!-- SOS TICKER (FIXED TOP) -->
+    <div class="sos-ticker">
+        <div class="ticker-content">
+            🚨 SECURITY SOS: 0781 133 3778 | 0781 133 3779 &nbsp;&nbsp;&nbsp; 🔥 FIRE ALERT: 0783 577 0552 &nbsp;&nbsp;&nbsp; ⛑️ HSE: 0781 133 3772 &nbsp;&nbsp;&nbsp; 🚑 AMBULANCE: 0780 003 8584 | 0780 968 1117 &nbsp;&nbsp;&nbsp; 🏥 CLINIC DOCTOR: 0780 003 6327
         </div>
     </div>
 
-<script>
-    // --- CONTENT DATA SOURCE ---
-    const content = {
-        en: {
-            title: "CAMP RULES & REGULATIONS",
-            subtitle: "Basrah Refinery Upgrading Project",
-            desc: "Orientation Guide for New Occupants",
-            btnStart: "OPEN GUIDE",
-            btnNext: "NEXT",
-            btnBack: "BACK",
-            p1: `
-                <h2>1. Welcome & Entry</h2>
-                [cite_start]<div class="highlight-box">"This Camp is your home away from home." [cite: 62]</div>
-                <h3>Identification</h3>
-                <ul>
-                    <li>Always carry your <strong>Project ID Card</strong>. [cite_start]It authorizes access to Camp and Dining[cite: 65].</li>
-                    [cite_start]<li>You may be asked to present ID by Security or Camp Staff[cite: 66].</li>
-                </ul>
-                <h3>Check-In Policy</h3>
-                <ul>
-                    [cite_start]<li>Residents sign a receipt for furniture upon arrival[cite: 67].</li>
-                    <li><strong>Keys:</strong> Do not lend keys. [cite_start]Lost key penalty: USD 5.00 - 10.00[cite: 120, 222].</li>
-                    [cite_start]<li>Check-in/out is available 24 hours[cite: 314].</li>
-                </ul>
-            `,
-            p2: `
-                <h2>2. Room Rules</h2>
-                <h3>Prohibited Actions</h3>
-                <div class="warning-box">
-                    <ul>
-                        [cite_start]<li><strong>No Cooking:</strong> Hotplates, burners, and candles are strictly prohibited in rooms[cite: 153].</li>
-                        [cite_start]<li><strong>Modifications:</strong> No nails, stickers, or electrical changes to walls[cite: 146, 148].</li>
-                        <li><strong>Laundry:</strong> Washing clothes in bathrooms is prohibited. [cite_start]Use the Laundry Service[cite: 99].</li>
-                    </ul>
-                </div>
-                <h3>Noise & Conduct</h3>
-                <p>Quiet must be maintained. Nightshift workers sleep during the day. [cite_start]Excessive noise is not tolerated[cite: 73, 74].</p>
-            `,
-            p3: `
-                <h2>3. Services & Facilities</h2>
-                <h3>Dining Hall</h3>
-                <p>Meals provided with ID. [cite_start]<strong>Rule:</strong> No food, plates, or cutlery to be removed from the dining room[cite: 104, 105].</p>
-                
-                <h3>Laundry Schedule</h3>
-                <ul>
-                    [cite_start]<li><strong>Contractor Camp:</strong> Collect 6AM-8AM / Return 4PM-5PM[cite: 326].</li>
-                    [cite_start]<li><strong>Subcontractor Camp:</strong> Drop off 6AM-8AM / Return 4PM-5PM[cite: 327].</li>
-                </ul>
+    <!-- BOOK SCENE -->
+    <div class="scene">
+        <div class="book" id="book">
+            <!-- Pages injected by JS -->
+        </div>
+    </div>
 
-                <h3>Connectivity & Recreation</h3>
-                <ul>
-                    [cite_start]<li><strong>WiFi Code:</strong> <span class="shine-text">ibru2022@</span> [cite: 323]</li>
-                    [cite_start]<li>Facilities: Gym, Billiards, Indoor Golf, Barber Shop[cite: 318].</li>
-                </ul>
-            `,
-            p4: `
-                <h2>4. Safety & Emergency</h2>
-                <div class="warning-box" style="text-align:center;">
-                    <strong>EMERGENCY HOTLINE</strong><br>
-                    [cite_start]<span style="font-size:1.5rem; color:red;">078-1133-3772</span> [cite: 290]
-                </div>
-                <h3>Fire Safety</h3>
-                <ul>
-                    <li>Do not tamper with Smoke Detectors or Extinguishers. [cite_start]Result: Immediate Expulsion[cite: 114].</li>
-                    <li><strong>Smoking:</strong> Strictly prohibited inside buildings. [cite_start]Use designated areas only[cite: 115].</li>
-                </ul>
-                <h3>Medical</h3>
-                <p>Clinic available 24/7. Referrals require Camp Manager confirmation. [cite_start]Consumables may be deducted from subcontractor payment[cite: 300, 302].</p>
-            `,
-            p5: `
-                <h2>5. Contacts</h2>
-                [cite_start]<p><strong>Camp Maintenance:</strong> 6AM - 5PM (Repair crews available 24/7) [cite: 312, 314]</p>
-                
-                <table style="width:100%; border-collapse: collapse; margin-top:10px;">
-                    <tr style="background:#ddd;"><td style="padding:5px;"><strong>Role</strong></td><td style="padding:5px;"><strong>Name / Number</strong></td></tr>
-                    <tr><td style="padding:5px;">Day Shift</td><td style="padding:5px;">Mr. [cite_start]Deepak (0780-989-0645) [cite: 248]</td></tr>
-                    <tr><td style="padding:5px;">Night Shift</td><td style="padding:5px;">Mr. [cite_start]Singh (0783-354-8547) [cite: 248]</td></tr>
-                    <tr><td style="padding:5px;">Subcon Camp</td><td style="padding:5px;">Mr. [cite_start]Irfan (0785-004-8715) [cite: 248]</td></tr>
-                </table>
-                <div class="highlight-box" style="text-align:center; margin-top:20px;">
-                    <h3 style="background:none; color:var(--primary-blue);">HAVE A SAFE STAY!</h3>
-                </div>
-            `
-        },
-        ar: {
-            title: "قواعد وأنظمة المخيم",
-            subtitle: "مشروع تحديث مصفاة البصرة",
-            desc: "دليل توجيهي للمقيمين الجدد",
-            btnStart: "افتح الدليل",
-            btnNext: "التالي",
-            btnBack: "رجوع",
-            p1: `
-                <h2>1. الترحيب والدخول</h2>
-                [cite_start]<div class="highlight-box">"هذا المخيم هو منزلك بعيداً عن المنزل." [cite: 62]</div>
-                <h3>الهوية والدخول</h3>
-                <ul>
-                    <li>احمل دائمًا <strong>بطاقة هوية المشروع</strong>. [cite_start]فهي تسمح بالدخول للمخيم والمطعم[cite: 65].</li>
-                    [cite_start]<li>قد يُطلب منك إبراز الهوية من قبل الأمن[cite: 66].</li>
-                </ul>
-                <h3>إجراءات تسجيل الدخول</h3>
-                <ul>
-                    [cite_start]<li>يوقع المقيمون على استلام الأثاث عند الوصول[cite: 67].</li>
-                    <li><strong>المفاتيح:</strong> لا تقم بإعارة المفاتيح. [cite_start]غرامة فقدان المفتاح: 5 - 10 دولار[cite: 120, 222].</li>
-                </ul>
-            `,
-            p2: `
-                <h2>2. قواعد الغرف</h2>
-                <h3>الأعمال المحظورة</h3>
-                <div class="warning-box">
-                    <ul>
-                        [cite_start]<li><strong>الطبخ ممنوع:</strong> يُمنع استخدام السخانات والشموع داخل الغرف تماماً[cite: 153].</li>
-                        [cite_start]<li><strong>التعديلات:</strong> ممنوع استخدام المسامير أو الملصقات على الجدران[cite: 148].</li>
-                        <li><strong>الغسيل:</strong> يُمنع غسل الملابس في الحمامات. [cite_start]استخدم خدمة الغسيل[cite: 99].</li>
-                    </ul>
-                </div>
-                <h3>الضوضاء والسلوك</h3>
-                <p>يجب الحفاظ على الهدوء. [cite_start]عمال المناوبة الليلية ينامون أثناء النهار[cite: 74].</p>
-            `,
-            p3: `
-                <h2>3. الخدمات والمرافق</h2>
-                <h3>قاعة الطعام</h3>
-                <p>الوجبات تقدم بالهوية. [cite_start]<strong>قاعدة:</strong> يمنع إخراج الطعام أو الأطباق من قاعة الطعام[cite: 104].</p>
-                
-                <h3>خدمة الغسيل</h3>
-                <ul>
-                    [cite_start]<li><strong>مخيم المقاول:</strong> الاستلام 6-8 صباحاً / الإعادة 4-5 مساءً[cite: 326].</li>
-                </ul>
+    <script>
+        const LOGO_JGC = "https://raw.githubusercontent.com/mrbharadvaja/contractorcamp/main/images/JGC.jpg.png";
+        const LOGO_HYUNDAI = "https://raw.githubusercontent.com/mrbharadvaja/contractorcamp/main/images/HYUNDAILOGO.png";
 
-                <h3>الاتصال والترفيه</h3>
-                <ul>
-                    [cite_start]<li><strong>رمز الواي فاي:</strong> <span class="shine-text">ibru2022@</span> [cite: 323]</li>
-                    [cite_start]<li>المرافق: صالة ألعاب رياضية، بلياردو، حلاق[cite: 318].</li>
-                </ul>
-            `,
-            p4: `
-                <h2>4. السلامة والطوارئ</h2>
-                <div class="warning-box" style="text-align:center;">
-                    <strong>خط الطوارئ الساخن</strong><br>
-                    [cite_start]<span style="font-size:1.5rem; color:red;">078-1133-3772</span> [cite: 290]
-                </div>
-                <h3>السلامة من الحرائق</h3>
-                <ul>
-                    <li>لا تعبث بكاشفات الدخان أو الطفايات. [cite_start]النتيجة: الطرد الفوري[cite: 114].</li>
-                    [cite_start]<li><strong>التدخين:</strong> ممنوع تماماً داخل المباني[cite: 115].</li>
-                </ul>
-                <h3>الخدمات الطبية</h3>
-                <p>العيادة متاحة 24/7. [cite_start]الإحالات تتطلب موافقة مدير المخيم[cite: 300].</p>
-            `,
-            p5: `
-                <h2>5. جهات الاتصال</h2>
-                [cite_start]<p><strong>صيانة المخيم:</strong> 6 صباحاً - 5 مساءً [cite: 314]</p>
-                
-                <table style="width:100%; border-collapse: collapse; margin-top:10px;">
-                    <tr style="background:#ddd;"><td style="padding:5px;"><strong>الدور</strong></td><td style="padding:5px;"><strong>الاسم / الرقم</strong></td></tr>
-                    <tr><td style="padding:5px;">الوردية الصباحية</td><td style="padding:5px;">Mr. [cite_start]Deepak (0780-989-0645) [cite: 248]</td></tr>
-                    <tr><td style="padding:5px;">الوردية الليلية</td><td style="padding:5px;">Mr. [cite_start]Singh (0783-354-8547) [cite: 248]</td></tr>
-                </table>
-            `
-        },
-        ko: {
-            title: "캠프 규칙 및 규정",
-            subtitle: "바스라 정유공장 고도화 프로젝트",
-            desc: "신규 입주자를 위한 오리엔테이션 가이드",
-            btnStart: "가이드 열기",
-            btnNext: "다음",
-            btnBack: "뒤로",
-            p1: `
-                <h2>1. 환영 및 입실</h2>
-                [cite_start]<div class="highlight-box">"이 캠프는 여러분의 집과 같습니다." [cite: 62]</div>
-                <h3>신분증 및 출입</h3>
-                <ul>
-                    <li>항상 <strong>프로젝트 ID 카드</strong>를 소지하십시오. [cite_start]캠프 및 식당 출입에 필요합니다[cite: 65].</li>
-                    [cite_start]<li>보안 요원이나 캠프 직원이 ID 제시를 요청할 수 있습니다[cite: 66].</li>
-                </ul>
-                <h3>체크인 정책</h3>
-                <ul>
-                    [cite_start]<li>입주자는 가구/비품 수령증에 서명해야 합니다[cite: 67].</li>
-                    <li><strong>열쇠:</strong> 열쇠를 빌려주지 마십시오. [cite_start]분실 시 벌금: USD 5.00 - 10.00[cite: 120].</li>
-                </ul>
-            `,
-            p2: `
-                <h2>2. 숙소 규칙</h2>
-                <h3>금지 사항</h3>
-                <div class="warning-box">
-                    <ul>
-                        [cite_start]<li><strong>취사 금지:</strong> 객실 내 전열기구, 버너, 양초 사용은 엄격히 금지됩니다[cite: 153].</li>
-                        [cite_start]<li><strong>개조 금지:</strong> 벽에 못, 스티커, 전기 개조 금지[cite: 146].</li>
-                        <li><strong>세탁:</strong> 욕실 내 세탁 금지. [cite_start]지정된 세탁 서비스를 이용하십시오[cite: 99].</li>
-                    </ul>
-                </div>
-                <h3>소음 및 행동</h3>
-                <p>정숙을 유지하십시오. [cite_start]야간 근무자가 낮에 수면을 취할 수 있습니다[cite: 74].</p>
-            `,
-            p3: `
-                <h2>3. 서비스 및 시설</h2>
-                <h3>식당</h3>
-                <p>ID 소지자에게 식사가 제공됩니다. [cite_start]<strong>규칙:</strong> 식당 외부로 음식이나 식기를 반출할 수 없습니다[cite: 104].</p>
-                
-                <h3>세탁 서비스</h3>
-                <ul>
-                    [cite_start]<li><strong>원청 캠프:</strong> 수거 06:00-08:00 / 반납 16:00-17:00[cite: 326].</li>
-                    [cite_start]<li><strong>하청 캠프:</strong> 접수 06:00-08:00 / 반납 16:00-17:00[cite: 327].</li>
-                </ul>
+        // --- COMPREHENSIVE TEXT DATABASE (31 PAGES) ---
+        const TEXT = {
+            en: {
+                project_header: "Basrah Refinery Upgrading Project",
+                page_label: "Page",
+                btn_prev: "Prev",
+                btn_next: "Next",
+                btn_home: "⌂",
+                // Page 01: Cover
+                p01_title: "CONTRACTOR CAMP<br>RULES & GUIDELINES",
+                p01_years: "2026–2027",
+                p01_mgr: "Camp Manager: Minsoo Kim",
+                p01_by: "Created by: Deepak Sharma",
+                p01_btn: "Open Guidelines",
+                // Page 02: Index
+                p02_title: "Table of Contents",
+                // Page 03: Welcome
+                p03_title: "Welcome Note",
+                p03_body: "<p>Welcome to the Contractor Camp. This camp is your home away from home during the Basrah Refinery Upgrading Project. Our goal is to provide a safe, disciplined, organized, and comfortable living environment for all residents.</p><p>Our camp team is committed to high standards of accommodation, services, and safety. Your cooperation in following these rules and guidelines is essential. When every resident respects the system, the camp runs smoothly and everyone benefits.</p>",
+                // Page 04: Discipline
+                p04_title: "General Discipline & Responsibilities",
+                p04_body: "<ul><li>The camp is a shared living community. Respect, discipline, and hygiene are mandatory.</li><li>Residents must follow camp rules in rooms, corridors, dining areas, recreation areas, and all common spaces.</li><li>Misbehavior, repeated complaints, or serious violations may lead to disciplinary action, restriction of camp privileges, or removal from camp.</li></ul>",
+                // Page 05: ID
+                p05_title: "Identification, Access & Security",
+                p05_body: "<ul><li>Always carry your valid Project ID / Camp Access authorization.</li><li>Entry and exit must be done only through authorized gates/checkpoints.</li><li>Security checks may be conducted when entering or leaving the camp.</li><li>Unauthorized visitors or unregistered guests are not allowed to stay in camp.</li><li>Follow security instructions immediately and politely.</li></ul>",
+                // Page 06: Room
+                p06_title: "Room Allocation & Misuse",
+                p06_body: "<ul><li>Rooms are allocated by camp management only.</li><li>Changing rooms without approval is not allowed.</li><li>Room sharing changes, unauthorized occupancy, or misuse of rooms is strictly prohibited.</li><li>Residents are responsible for the condition of their room, furniture, and equipment.</li></ul>",
+                // Page 07: Noise
+                p07_title: "Noise Control & Respect",
+                p07_body: "<ul><li>Maintain a peaceful atmosphere at all times.</li><li>Do not disturb others with loud speaking, music, shouting, or arguments.</li><li>Residents must behave respectfully toward all nationalities, cultures, and religions.</li><li>Harassment, abusive language, threats, fighting, or violent behavior is strictly prohibited and will result in immediate strict action.</li></ul>",
+                // Page 08: Cleanliness
+                p08_title: "Cleanliness & Hygiene",
+                p08_body: "<ul><li>Keep your room clean and tidy daily.</li><li>Keep corridors clean; do not leave shoes, bags, cartons, or materials outside the room.</li><li>Waste must be disposed of only in waste bins. No littering.</li><li>Food waste must not be thrown in rooms, toilets, or corridors.</li></ul>",
+                // Page 09: Toilet
+                p09_title: "Toilet Etiquette",
+                p09_body: "<p><strong>Important:</strong></p><ul><li>Toilets are not trash bins.</li><li>Do not throw food waste, tissues, plastic, bottles, or any solid waste inside toilets.</li><li>Blocking toilets creates hygiene issues for everyone.</li><li>Any repeated misuse may result in charges or disciplinary action.</li></ul>",
+                // Page 10: Power
+                p10_title: "Power Conservation",
+                p10_body: "<ul><li>Power conservation is mandatory.</li><li>Switch off lights, AC, chargers, and electrical items when not in use.</li><li>Avoid unnecessary electricity usage inside rooms.</li><li>Do not tamper with electrical systems, sockets, or wiring.</li></ul>",
+                // Page 11: Fire
+                p11_title: "Fire Safety (Zero Risk)",
+                p11_body: "<ul><li>Fire safety is everyone’s responsibility.</li><li>Never tamper with smoke detectors, fire alarms, extinguishers, emergency lights, or any safety equipment.</li><li>Do not block emergency exits, stairways, or access routes.</li><li>Do not store flammable materials inside rooms or corridors.</li><li>Report any fire risk, burning smell, sparks, or electrical issues immediately to camp helpdesk/security.</li></ul>",
+                // Page 12: Smoking
+                p12_title: "Smoking Policy",
+                p12_body: "<ul><li>Smoking is allowed only in designated cigarette shelters.</li><li>Smoking is strictly prohibited in rooms, toilets, corridors, and all indoor areas.</li><li>Do not throw cigarette butts on the ground. Use proper disposal points.</li><li>Smoking violations will be treated seriously due to fire risk.</li></ul>",
+                // Page 13: Cooking
+                p13_title: "Cooking Rules",
+                p13_body: "<p style='color:red; font-weight:bold;'>Strict Prohibition Without Approval</p><ul><li>Cooking inside camp accommodation is strictly prohibited without Camp Manager approval.</li><li>Residents must not use electric cookers, hot plates, gas stoves, heaters, or homemade cooking arrangements inside rooms.</li><li>If cooking is found without permission, strict action will be taken because it creates fire and safety hazards.</li></ul>",
+                // Page 14: Speed
+                p14_title: "Safe Driving",
+                p14_body: "<ul><li>Drive slowly and carefully inside the camp area.</li><li>Always follow speed limits and pedestrian safety.</li><li>Reckless driving, horn misuse, or unsafe parking is not acceptable.</li></ul>",
+                // Page 15: Key
+                p15_title: "Lost Room Key Policy",
+                p15_body: "<ul><li>Room key must be handled carefully and kept secure.</li><li>If a room key is lost, a replacement fine will be charged (as per camp policy).</li><li>Based on the camp advisory, lost room key fine is <strong>$30</strong>.</li></ul>",
+                // Page 16: Hanger
+                p16_title: "Laundry Hanger Rule",
+                p16_body: "<ul><li>Laundry hangers are camp property and must be used responsibly.</li><li>Return extra laundry hangers to the camp office after use.</li></ul>",
+                // Page 17: Prohibited
+                p17_title: "Strictly Prohibited Items",
+                p17_body: "<div style='border:2px solid red; padding:10px; background:#fff0f0;'><ul><li>Any illegal drugs or prohibited substances.</li><li>Weapons, firearms, sharp weapons, or dangerous tools.</li><li>Violence, fighting, threats, harassment, bullying, or abusive behavior.</li><li>Theft, vandalism, intentional damage, or misuse of camp property.</li><li>Tampering with fire systems or creating false alarms.</li><li>Unauthorized electrical modification or high-risk equipment usage.</li><li>Repeated rule violations even after warnings.</li></ul><p><strong>Serious violations may result in immediate removal.</strong></p></div>",
+                // Page 18: Checkin
+                p18_title: "Room Check-In Process",
+                p18_body: "<h3>Arrival at Airport</h3><p>Transportation will be arranged with Personal Security Detail (PSD) to ensure a safe transfer to FCC.</p><h3>Camp Office Check-In</h3><ul><li>Visit the Camp Office upon arrival.</li><li>Sign the Check-In Form to complete your registration.</li><li>Receive your Room Key and essential information about your stay.</li></ul>",
+                // Page 19: WiFi
+                p19_title: "Free WiFi Information",
+                p19_body: "<p>Free WiFi is available for residents.</p><p><strong>WiFi Name:</strong> Your Room Number (e.g., S3A, S2)</p><p><strong>Password Logic:</strong><br>If room is S3A-A-01-R<br>Password: <code>S3A_A_01@@</code></p><p><strong>Master Password:</strong> <code>ibru2022@</code></p>",
+                // Page 20: Uniform
+                p20_title: "Staff Uniform Issuance",
+                p20_body: "<p>After receiving your Room Key, fill out the Uniform Request Form.</p><table class='table-custom'><tr><th>Item</th><th>Sizes</th></tr><tr><td>Shirt (cm)</td><td>90, 95, 100, 105, 110</td></tr><tr><td>Pant</td><td>30, 32, 34, 36, 38</td></tr></table><p><strong>Allocation:</strong><br>New Arrival: 02 pairs<br>After one year: 01 pair</p>",
+                // Page 21: Contacts
+                p21_title: "Camp Support Contacts",
+                p21_body: "<p><strong>Camp Manager:</strong> Minsoo Kim – 783 577 0133</p><p><strong>Camp Incharge:</strong> Deepak Sharma – 786 477 7597</p><p><strong>Office Staff:</strong> Mahesh Pandey – 786 160 6036</p><p><strong>Office Staff:</strong> Pankaj – 784 888 9590</p><p>Residents should contact the Camp Office for official requests.</p>",
+                // Page 22: Hotline
+                p22_title: "Emergency Hotlines",
+                p22_body: "<table class='table-custom'><tr><td><strong>JGC Security Manager</strong></td><td>Mr. Uchino – 0783 330 1043</td></tr><tr><td><strong>Security Team</strong></td><td>0781 133 3778 / 3779</td></tr><tr><td style='color:red'><strong>Fire Alert</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>HSE Phone</strong></td><td>0781 133 3772</td></tr><tr><td><strong>Ambulance</strong></td><td>0780 003 8584</td></tr><tr><td><strong>Clinic Doctor</strong></td><td>0780 003 6327</td></tr></table>",
+                // Page 23: Advisory
+                p23_title: "Camp Advisory",
+                p23_body: "<ul><li><strong>Power:</strong> Turn off when leaving room.</li><li><strong>Smoking:</strong> Designated shelters only.</li><li><strong>Toilet:</strong> Do not throw waste inside.</li><li><strong>Hangers:</strong> Return extra to office.</li><li><strong>Speed:</strong> Drive slowly.</li><li><strong>Key Loss:</strong> $30 fine.</li><li><strong>Cooking:</strong> Prohibited without approval.</li></ul>",
+                // Page 24: Facility
+                p24_title: "Facilities & Booking",
+                p24_body: "<p><strong>Timings:</strong><br>Weekday: 10:00 – 22:00<br>Fri/Holiday: 06:00 – 21:00</p><p><strong>Available:</strong> Golf, Karaoke, PS Zone, Gym, Market, Barber, BBQ Area.</p><a href='http://10.174.139.142/mrbs/web/index.php' target='_blank' class='btn-link'>Book Facility Online</a>",
+                // Page 25: Maintenance
+                p25_title: "Maintenance Support",
+                p25_body: "<p>Team available for:</p><ul><li>Electrical Support</li><li>Plumbing Services</li><li>Carpentry Work</li></ul><p>Report issues promptly for quick action.</p>",
+                // Page 26: Laundry
+                p26_title: "Laundry Service",
+                p26_body: "<p><strong>Daily Service:</strong> Place laundry (uniform, clothes, bedding) in front of room.</p><p><strong>Collection:</strong> 6 AM, 10 AM, 2 PM</p><p><strong>Delivery:</strong> Before 10 PM daily.</p>",
+                // Page 27: Cleaning
+                p27_title: "Room Cleaning",
+                p27_body: "<p>Provided <strong>Saturday to Thursday</strong>.</p><p>For HYUNDAI, JGC, and PMC residents only.</p><p>The team ensures living spaces remain clean and comfortable.</p>",
+                // Page 28: Consumables
+                p28_title: "Daily Consumables",
+                p28_body: "<p><strong>Items:</strong> Water, Shampoo, Soap, Tissues.</p><p><strong>Request:</strong> Online via server or visit Camp Office.</p><p><strong>Delivery:</strong> By 9 PM daily.</p>",
+                // Page 29: Pest
+                p29_title: "Pest Control",
+                p29_body: "<p>Twice a day:</p><ul><li>Morning: Spray type</li><li>Afternoon: Smoke type</li></ul><p>Contact Office for indoor room pest control.</p>",
+                // Page 30: Checkout
+                p30_title: "Check-Out Procedure",
+                p30_body: "<ol><li>Visit Camp Office and inform checkout date/time.</li><li>Submit room key to Camp Office.</li><li>Camp team will inspect room and approve checkout.</li></ol>",
+                // Page 31: Closing
+                p31_title: "Closing Message",
+                p31_body: "<p>The successful completion of the Basrah Refinery Upgrading Project depends on excellence and safety. This manual ensures smooth operations.</p><p>Thank you for your cooperation.</p><p><strong>Together, we will complete this project successfully.</strong></p>",
+                p31_btn_home: "Back to Cover",
+                p31_resources: "<strong>Resources:</strong>",
+                btn_map: "Earth Map",
+                btn_layout: "Layout Image",
+                btn_pdf: "Download PDF"
+            },
+            hi: {
+                project_header: "बसरा रिफाइनरी अपग्रेडिंग प्रोजेक्ट",
+                page_label: "पेज",
+                btn_prev: "पिछला",
+                btn_next: "अगला",
+                btn_home: "⌂",
+                p01_title: "ठेकेदार कैंप<br>नियम और दिशानिर्देश",
+                p01_years: "2026–2027",
+                p01_mgr: "कैंप मैनेजर: मिनसू किम",
+                p01_by: "निर्माता: दीपक शर्मा",
+                p01_btn: "गाइडलाइन्स खोलें",
+                p02_title: "विषय सूची",
+                p03_title: "स्वागत संदेश",
+                p03_body: "<p>कॉन्ट्रैक्टर कैंप में आपका स्वागत है। यह कैंप आपका “दूसरा घर” है। हमारा उद्देश्य सुरक्षित, अनुशासित और आरामदायक वातावरण प्रदान करना है।</p><p>हमारी टीम उच्च मानकों के लिए प्रतिबद्ध है। नियमों का पालन करना आवश्यक है। जब हर निवासी नियमों का सम्मान करता है, तो कैंप सुचारू रूप से चलता है।</p>",
+                p04_title: "सामान्य अनुशासन",
+                p04_body: "<ul><li>यह एक साझा समुदाय है। सम्मान और अनुशासन अनिवार्य है।</li><li>निवासियों को सभी स्थानों पर नियमों का पालन करना होगा।</li><li>गलत व्यवहार या उल्लंघन पर अनुशासनात्मक कार्रवाई या निष्कासन हो सकता है।</li></ul>",
+                p05_title: "पहचान और सुरक्षा",
+                p05_body: "<ul><li>वैध प्रोजेक्ट ID हमेशा साथ रखें।</li><li>प्रवेश केवल अधिकृत गेट से करें।</li><li>सुरक्षा जांच हो सकती है।</li><li>बिना अनुमति विजिटर मना है।</li><li>सुरक्षा निर्देशों का पालन करें।</li></ul>",
+                p06_title: "रूम आवंटन",
+                p06_body: "<ul><li>रूम केवल मैनेजमेंट आवंटित करता है।</li><li>बिना अनुमति रूम बदलना मना है।</li><li>अनधिकृत व्यक्ति को ठहराना मना है।</li><li>फर्नीचर की जिम्मेदारी निवासी की है।</li></ul>",
+                p07_title: "सम्मान और व्यवहार",
+                p07_body: "<ul><li>शांत वातावरण बनाए रखें।</li><li>तेज आवाज या झगड़ा न करें।</li><li>सभी धर्मों और संस्कृतियों का सम्मान करें।</li><li>हिंसा, धमकी या गाली-गलौज पर तुरंत कड़ी कार्रवाई होगी।</li></ul>",
+                p08_title: "स्वच्छता मानक",
+                p08_body: "<ul><li>रूम रोज साफ रखें।</li><li>कॉरिडोर में सामान न रखें।</li><li>कचरा केवल डस्टबिन में डालें।</li><li>खाने का कचरा इधर-उधर न फेंकें।</li></ul>",
+                p09_title: "टॉयलेट नियम",
+                p09_body: "<p><strong>महत्वपूर्ण:</strong></p><ul><li>टॉयलेट कूड़ेदान नहीं है।</li><li>कचरा, टिशू या प्लास्टिक टॉयलेट में न डालें।</li><li>ब्लॉक होने से समस्या होती है।</li><li>गलत उपयोग पर फाइन लग सकता है।</li></ul>",
+                p10_title: "बिजली बचत",
+                p10_body: "<ul><li>बिजली बचत अनिवार्य है।</li><li>उपयोग न होने पर लाइट/AC बंद करें।</li><li>अनावश्यक बिजली न जलाएं।</li><li>वायरिंग से छेड़छाड़ न करें।</li></ul>",
+                p11_title: "फायर सेफ्टी",
+                p11_body: "<ul><li>सेफ्टी सबकी जिम्मेदारी है।</li><li>स्मोक डिटेक्टर या अलार्म से छेड़छाड़ न करें।</li><li>एग्जिट ब्लॉक न करें।</li><li>ज्वलनशील सामान न रखें।</li><li>आग या स्पार्क की तुरंत रिपोर्ट करें।</li></ul>",
+                p12_title: "स्मोकिंग पॉलिसी",
+                p12_body: "<ul><li>केवल स्मोकिंग शेल्टर में अनुमति है।</li><li>रूम या इनडोर एरिया में सख्त मना है।</li><li>सिगरेट जमीन पर न फेंकें।</li><li>उल्लंघन पर कड़ी कार्रवाई होगी।</li></ul>",
+                p13_title: "कुकिंग नियम",
+                p13_body: "<p style='color:red; font-weight:bold;'>बिना अनुमति सख्त मना है</p><ul><li>कैंप मैनेजर की अनुमति बिना कुकिंग मना है।</li><li>रूम में हीटर, स्टोव या कुकर का उपयोग न करें।</li><li>पकड़े जाने पर सेफ्टी खतरे के कारण कार्रवाई होगी।</li></ul>",
+                p14_title: "सुरक्षित ड्राइविंग",
+                p14_body: "<ul><li>धीरे और सावधानी से चलाएं।</li><li>स्पीड लिमिट का पालन करें।</li><li>लापरवाही या गलत हॉर्न स्वीकार्य नहीं है।</li></ul>",
+                p15_title: "चाबी खोने पर",
+                p15_body: "<ul><li>चाबी सुरक्षित रखें।</li><li>खोने पर रिप्लेसमेंट फाइन लगेगा।</li><li>फाइन राशि: <strong>$30</strong>।</li></ul>",
+                p16_title: "हैंगर नियम",
+                p16_body: "<ul><li>हैंगर कैंप की संपत्ति हैं।</li><li>उपयोग के बाद वापस करें।</li></ul>",
+                p17_title: "सख्त निषेध (Zero Tolerance)",
+                p17_body: "<div style='border:2px solid red; padding:10px; background:#fff0f0;'><ul><li>अवैध ड्रग्स।</li><li>हथियार या खतरनाक औजार।</li><li>हिंसा, लड़ाई या धमकी।</li><li>चोरी या तोड़फोड़।</li><li>फायर सिस्टम से छेड़छाड़।</li><li>अवैध इलेक्ट्रिकल बदलाव।</li></ul><p><strong>गंभीर उल्लंघन पर तुरंत हटाया जाएगा।</strong></p></div>",
+                p18_title: "चेक-इन प्रक्रिया",
+                p18_body: "<h3>एयरपोर्ट आगमन</h3><p>PSD द्वारा सुरक्षित ट्रांसपोर्ट मिलेगा।</p><h3>कैंप ऑफिस</h3><ul><li>ऑफिस जाएं।</li><li>फॉर्म साइन करें।</li><li>चाबी और जानकारी लें।</li></ul>",
+                p19_title: "फ्री WiFi",
+                p19_body: "<p>निवासियों के लिए उपलब्ध।</p><p><strong>WiFi Name:</strong> रूम नंबर</p><p><strong>पासवर्ड:</strong> जैसे S3A_A_01@@</p><p><strong>मास्टर पासवर्ड:</strong> <code>ibru2022@</code></p>",
+                p20_title: "यूनिफॉर्म वितरण",
+                p20_body: "<p>चाबी मिलने के बाद फॉर्म भरें।</p><p>सही साइज दें (Shirt 90-110, Pant 30-38)।</p><p><strong>मात्रा:</strong><br>नई आगमन: 02 जोड़े<br>एक साल बाद: 01 जोड़ा</p>",
+                p21_title: "सपोर्ट कॉन्टैक्ट",
+                p21_body: "<p><strong>Manager:</strong> Minsoo Kim – 783 577 0133</p><p><strong>Incharge:</strong> Deepak Sharma – 786 477 7597</p><p><strong>Staff:</strong> Mahesh – 786 160 6036</p><p><strong>Staff:</strong> Pankaj – 784 888 9590</p>",
+                p22_title: "आपातकालीन नंबर",
+                p22_body: "<table class='table-custom'><tr><td><strong>Security Manager</strong></td><td>0783 330 1043</td></tr><tr><td><strong>Security Team</strong></td><td>0781 133 3778</td></tr><tr><td style='color:red'><strong>Fire Alert</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>HSE</strong></td><td>0781 133 3772</td></tr><tr><td><strong>Ambulance</strong></td><td>0780 003 8584</td></tr><tr><td><strong>Doctor</strong></td><td>0780 003 6327</td></tr></table>",
+                p23_title: "कैंप एडवाइजरी",
+                p23_body: "<ul><li><strong>Power:</strong> बाहर जाते समय बंद करें।</li><li><strong>Smoking:</strong> शेल्टर में ही करें।</li><li><strong>Toilet:</strong> कचरा न डालें।</li><li><strong>Hangers:</strong> वापस करें।</li><li><strong>Speed:</strong> धीरे चलाएं।</li><li><strong>Key:</strong> $30 फाइन।</li><li><strong>Cooking:</strong> मना है।</li></ul>",
+                p24_title: "सुविधाएं और बुकिंग",
+                p24_body: "<p><strong>समय:</strong> 10:00 – 22:00 (शुक्रवार 06:00 से)।</p><p>गोल्फ, जिम, मार्केट, बार्बर, BBQ आदि उपलब्ध।</p><a href='http://10.174.139.142/mrbs/web/index.php' target='_blank' class='btn-link'>बुकिंग करें</a>",
+                p25_title: "मेंटेनेंस",
+                p25_body: "<ul><li>इलेक्ट्रिकल</li><li>प्लंबिंग</li><li>कारपेंटर</li></ul><p>तुरंत रिपोर्ट करें।</p>",
+                p26_title: "लॉन्ड्री सेवा",
+                p26_body: "<p><strong>रोजाना:</strong> सुबह कॉरिडोर में रखें।</p><p><strong>कलेक्शन:</strong> 6 AM, 10 AM, 2 PM</p><p><strong>डिलीवरी:</strong> रात 10 बजे तक।</p>",
+                p27_title: "रूम क्लीनिंग",
+                p27_body: "<p>शनिवार से गुरुवार।</p><p>केवल HYUNDAI, JGC, PMC निवासियों के लिए।</p>",
+                p28_title: "दैनिक सामग्री",
+                p28_body: "<p>पानी, साबुन, शैम्पू, टिशू।</p><p>ऑनलाइन या ऑफिस से मांगें।</p><p><strong>डिलीवरी:</strong> 9 PM तक।</p>",
+                p29_title: "पेस्ट कंट्रोल",
+                p29_body: "<p>दिन में दो बार (स्प्रे और स्मोक)।</p><p>इनडोर सर्विस के लिए ऑफिस बताएं।</p>",
+                p30_title: "चेक-आउट",
+                p30_body: "<ol><li>डेट/टाइम बताएं।</li><li>चाबी जमा करें।</li><li>रूम निरीक्षण होगा।</li></ol>",
+                p31_title: "समापन संदेश",
+                p31_body: "<p>प्रोजेक्ट की सफलता आपकी सुरक्षा और सहयोग पर निर्भर है।</p><p>धन्यवाद।</p><p><strong>मिलकर हम सफल होंगे।</strong></p>",
+                p31_btn_home: "होम पर जाएं",
+                p31_resources: "<strong>संसाधन:</strong>",
+                btn_map: "अर्थ मैप",
+                btn_layout: "लेआउट इमेज",
+                btn_pdf: "पीडीएफ डाउनलोड"
+            },
+            ar: {
+                project_header: "مشروع تطوير مصفاة البصرة",
+                page_label: "صفحة",
+                btn_prev: "السابق",
+                btn_next: "التالي",
+                btn_home: "⌂",
+                p01_title: "معسكر المقاولين<br>القواعد والإرشادات",
+                p01_years: "2026–2027",
+                p01_mgr: "مدير المعسكر: Minsoo Kim",
+                p01_by: "إعداد: Deepak Sharma",
+                p01_btn: "فتح الإرشادات",
+                p02_title: "جدول المحتويات",
+                p03_title: "رسالة ترحيب",
+                p03_body: "<p>مرحبًا بكم في معسكر المقاولين. هدفنا توفير بيئة آمنة ومنضبطة ومريحة.</p><p>فريقنا ملتزم بأعلى المعايير. تعاونكم ضروري. عندما يحترم الجميع النظام، يستفيد الجميع.</p>",
+                p04_title: "الانضباط العام",
+                p04_body: "<ul><li>المعسكر مجتمع مشترك. الاحترام إلزامي.</li><li>يجب اتباع القواعد في كل مكان.</li><li>المخالفات قد تؤدي لإجراءات تأديبية أو الطرد.</li></ul>",
+                p05_title: "الأمن والدخول",
+                p05_body: "<ul><li>احمل الهوية دائمًا.</li><li>الدخول من البوابات المعتمدة فقط.</li><li>تفتيش أمني محتمل.</li><li>الزوار غير المصرح لهم ممنوعون.</li><li>اتبع تعليمات الأمن.</li></ul>",
+                p06_title: "تخصيص الغرف",
+                p06_body: "<ul><li>الإدارة تخصص الغرف فقط.</li><li>تغيير الغرفة ممنوع دون إذن.</li><li>المقيم مسؤول عن الأثاث.</li></ul>",
+                p07_title: "احترام المجتمع",
+                p07_body: "<ul><li>حافظ على الهدوء.</li><li>احترم جميع الثقافات والأديان.</li><li>العنف أو التهديد ممنوع منعًا باتًا.</li></ul>",
+                p08_title: "النظافة",
+                p08_body: "<ul><li>نظف غرفتك يوميًا.</li><li>لا تترك أغراضًا في الممرات.</li><li>استخدم سلة المهملات.</li></ul>",
+                p09_title: "آداب المرحاض",
+                p09_body: "<p><strong>هام:</strong></p><ul><li>المرحاض ليس سلة قمامة.</li><li>لا ترمِ المخلفات الصلبة فيه.</li><li>الانسداد يضر الجميع.</li></ul>",
+                p10_title: "ترشيد الطاقة",
+                p10_body: "<ul><li>أطفئ الأنوار والمكيف عند الخروج.</li><li>لا تعبث بالكهرباء.</li></ul>",
+                p11_title: "السلامة من الحريق",
+                p11_body: "<ul><li>لا تعبث بإنذار الحريق.</li><li>لا تغلق المخارج.</li><li>لا تخزن مواد قابلة للاشتعال.</li><li>أبلغ عن أي خطر فورًا.</li></ul>",
+                p12_title: "سياسة التدخين",
+                p12_body: "<ul><li>في الأماكن المخصصة فقط.</li><li>ممنوع داخل الغرف.</li><li>لا ترمِ الأعقاب على الأرض.</li></ul>",
+                p13_title: "قواعد الطبخ",
+                p13_body: "<p style='color:red; font-weight:bold;'>ممنوع بدون إذن</p><ul><li>الطبخ في الغرف ممنوع.</li><li>لا تستخدم السخانات أو المواقد.</li></ul>",
+                p14_title: "القيادة الآمنة",
+                p14_body: "<ul><li>قد ببطء.</li><li>التزم بالسرعة.</li><li>القيادة المتهورة ممنوعة.</li></ul>",
+                p15_title: "فقدان المفتاح",
+                p15_body: "<ul><li>حافظ على المفتاح.</li><li>غرامة الفقدان: <strong>30 دولارًا</strong>.</li></ul>",
+                p16_title: "علاقات الغسيل",
+                p16_body: "<ul><li>أعد العلاقات الإضافية إلى المكتب.</li></ul>",
+                p17_title: "ممنوعات صارمة",
+                p17_body: "<div style='border:2px solid red; padding:10px; background:#fff0f0;'><ul><li>المخدرات.</li><li>الأسلحة.</li><li>العنف.</li><li>السرقة.</li><li>العبث بالإنذار.</li></ul><p><strong>الطرد الفوري للمخالفين.</strong></p></div>",
+                p18_title: "تسجيل الدخول",
+                p18_body: "<h3>المطار</h3><p>نقل آمن عبر PSD.</p><h3>المكتب</h3><ul><li>زر المكتب.</li><li>وقّع النموذج.</li><li>استلم المفتاح.</li></ul>",
+                p19_title: "الواي فاي",
+                p19_body: "<p>مجاني للمقيمين.</p><p><strong>الاسم:</strong> رقم الغرفة</p><p><strong>كلمة المرور:</strong> مثال S3A_A_01@@</p><p><strong>الرئيسية:</strong> <code>ibru2022@</code></p>",
+                p20_title: "الزي الرسمي",
+                p20_body: "<p>اطلب الزي بعد استلام المفتاح.</p><p>حدد المقاس بدقة.</p><p><strong>الكمية:</strong> زوجان عند الوصول.</p>",
+                p21_title: "الدعم",
+                p21_body: "<p><strong>المدير:</strong> Minsoo Kim – 783 577 0133</p><p><strong>المسؤول:</strong> Deepak Sharma – 786 477 7597</p>",
+                p22_title: "الطوارئ",
+                p22_body: "<table class='table-custom'><tr><td><strong>الأمن</strong></td><td>0783 330 1043</td></tr><tr><td style='color:red'><strong>الحريق</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>الإسعاف</strong></td><td>0780 003 8584</td></tr></table>",
+                p23_title: "تنبيهات",
+                p23_body: "<ul><li><strong>الكهرباء:</strong> أطفئها.</li><li><strong>التدخين:</strong> في الأماكن المخصصة.</li><li><strong>السرعة:</strong> ببطء.</li><li><strong>المفتاح:</strong> غرامة 30$.</li></ul>",
+                p24_title: "المرافق",
+                p24_body: "<p><strong>الوقت:</strong> 10:00 – 22:00</p><p>جيم، سوق، حلاق، جولف.</p><a href='http://10.174.139.142/mrbs/web/index.php' target='_blank' class='btn-link'>حجز مرفق</a>",
+                p25_title: "الصيانة",
+                p25_body: "<ul><li>كهرباء</li><li>سباكة</li><li>نجارة</li></ul><p>أبلغ فورًا.</p>",
+                p26_title: "الغسيل",
+                p26_body: "<p>يوميًا. ضع الغسيل صباحًا أمام الغرفة.</p><p>التسليم قبل 10 مساءً.</p>",
+                p27_title: "التنظيف",
+                p27_body: "<p>السبت إلى الخميس.</p><p>لسكان Hyundai/JGC/PMC.</p>",
+                p28_title: "المواد الاستهلاكية",
+                p28_body: "<p>ماء، صابون، مناديل.</p><p>اطلب من المكتب أو أونلاين.</p>",
+                p29_title: "الحشرات",
+                p29_body: "<p>رش صباحًا ودخان مساءً.</p>",
+                p30_title: "المغادرة",
+                p30_body: "<ol><li>أبلغ المكتب.</li><li>سلم المفتاح.</li><li>فحص الغرفة.</li></ol>",
+                p31_title: "ختامًا",
+                p31_body: "<p>نجاح المشروع يعتمد عليكم.</p><p>شكرًا لتعاونكم.</p>",
+                p31_btn_home: "الرئيسية",
+                p31_resources: "<strong>روابط:</strong>",
+                btn_map: "الخريطة",
+                btn_layout: "المخطط",
+                btn_pdf: "تنزيل PDF"
+            },
+            ko: {
+                project_header: "바스라 정유공장 고도화 프로젝트",
+                page_label: "페이지",
+                btn_prev: "이전",
+                btn_next: "다음",
+                btn_home: "⌂",
+                p01_title: "컨트랙터 캠프<br>규정 및 가이드라인",
+                p01_years: "2026–2027",
+                p01_mgr: "캠프 매니저: Minsoo Kim",
+                p01_by: "작성: Deepak Sharma",
+                p01_btn: "가이드라인 열기",
+                p02_title: "목차",
+                p03_title: "환영 인사",
+                p03_body: "<p>컨트랙터 캠프에 오신 것을 환영합니다. 안전하고 편안한 환경을 제공하겠습니다.</p><p>규정 준수는 필수입니다. 모두가 규칙을 지킬 때 캠프는 원활하게 운영됩니다.</p>",
+                p04_title: "기본 규율",
+                p04_body: "<ul><li>상호 존중과 규율은 필수입니다.</li><li>공용 공간에서 규칙을 준수하십시오.</li><li>위반 시 징계 또는 퇴소 조치됩니다.</li></ul>",
+                p05_title: "보안 및 출입",
+                p05_body: "<ul><li>신분증 항시 소지.</li><li>지정 게이트 이용.</li><li>보안 검색 협조.</li><li>외부인 출입 금지.</li></ul>",
+                p06_title: "객실 배정",
+                p06_body: "<ul><li>매니저가 배정합니다.</li><li>임의 변경 금지.</li><li>비품 파손 책임.</li></ul>",
+                p07_title: "소음 및 존중",
+                p07_body: "<ul><li>정숙 유지.</li><li>타 문화 존중.</li><li>폭력/욕설 즉시 조치.</li></ul>",
+                p08_title: "청결",
+                p08_body: "<ul><li>방을 깨끗이.</li><li>복도에 물건 방치 금지.</li><li>쓰레기는 통에.</li></ul>",
+                p09_title: "화장실 예절",
+                p09_body: "<p><strong>중요:</strong></p><ul><li>변기에 쓰레기 투기 금지.</li><li>막힘 주의.</li></ul>",
+                p10_title: "절전",
+                p10_body: "<ul><li>외출 시 전원 OFF.</li><li>전기 조작 금지.</li></ul>",
+                p11_title: "화재 안전",
+                p11_body: "<ul><li>소방 설비 조작 금지.</li><li>비상구 확보.</li><li>인화물질 보관 금지.</li></ul>",
+                p12_title: "흡연 규정",
+                p12_body: "<ul><li>지정 구역만 가능.</li><li>실내 절대 금지.</li><li>꽁초 투기 금지.</li></ul>",
+                p13_title: "취사 금지",
+                p13_body: "<p style='color:red; font-weight:bold;'>승인 없이 금지</p><ul><li>객실 내 취사 절대 금지.</li><li>전열기구 사용 금지.</li></ul>",
+                p14_title: "안전 운전",
+                p14_body: "<ul><li>서행 운전.</li><li>속도 준수.</li></ul>",
+                p15_title: "키 분실",
+                p15_body: "<ul><li>분실 시 벌금 <strong>$30</strong>.</li></ul>",
+                p16_title: "옷걸이",
+                p16_body: "<ul><li>사용 후 반납.</li></ul>",
+                p17_title: "절대 금지 (무관용)",
+                p17_body: "<div style='border:2px solid red; padding:10px; background:#fff0f0;'><ul><li>마약/무기.</li><li>폭력/싸움.</li><li>절도/파손.</li><li>화재설비 조작.</li></ul><p><strong>즉시 퇴소 조치.</strong></p></div>",
+                p18_title: "체크인",
+                p18_body: "<h3>공항</h3><p>PSD 경호 이동.</p><h3>사무실</h3><ul><li>방문 및 서명.</li><li>키 수령.</li></ul>",
+                p19_title: "무료 WiFi",
+                p19_body: "<p><strong>이름:</strong> 방 번호</p><p><strong>비번:</strong> S3A_A_01@@ 형식</p><p><strong>마스터:</strong> <code>ibru2022@</code></p>",
+                p20_title: "유니폼",
+                p20_body: "<p>입소 후 신청.</p><p>신규 2벌 지급.</p>",
+                p21_title: "연락처",
+                p21_body: "<p><strong>매니저:</strong> Minsoo Kim – 783 577 0133</p><p><strong>담당:</strong> Deepak Sharma – 786 477 7597</p>",
+                p22_title: "긴급 전화",
+                p22_body: "<table class='table-custom'><tr><td><strong>보안</strong></td><td>0783 330 1043</td></tr><tr><td style='color:red'><strong>화재</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>구급차</strong></td><td>0780 003 8584</td></tr></table>",
+                p23_title: "생활 수칙",
+                p23_body: "<ul><li>전원 끄기.</li><li>실내 금연.</li><li>변기 주의.</li><li>서행.</li></ul>",
+                p24_title: "시설 예약",
+                p24_body: "<p>10:00 – 22:00</p><p>헬스장, 마트, 골프 등.</p><a href='http://10.174.139.142/mrbs/web/index.php' target='_blank' class='btn-link'>예약하기</a>",
+                p25_title: "유지보수",
+                p25_body: "<ul><li>전기/배관/목공.</li></ul><p>즉시 신고.</p>",
+                p26_title: "세탁",
+                p26_body: "<p>매일 아침 문 앞 배출.</p><p>밤 10시 전 배달.</p>",
+                p27_title: "청소",
+                p27_body: "<p>토~목요일.</p><p>대상: Hyundai/JGC/PMC.</p>",
+                p28_title: "소모품",
+                p28_body: "<p>물, 비누, 휴지.</p><p>사무실 요청.</p>",
+                p29_title: "방역",
+                p29_body: "<p>일 2회 실시.</p>",
+                p30_title: "체크아웃",
+                p30_body: "<ol><li>통보.</li><li>키 반납.</li><li>점검.</li></ol>",
+                p31_title: "마무리",
+                p31_body: "<p>안전과 협조에 감사드립니다.</p>",
+                p31_btn_home: "처음으로",
+                p31_resources: "<strong>자료:</strong>",
+                btn_map: "지도",
+                btn_layout: "배치도",
+                btn_pdf: "PDF 다운로드"
+            },
+            ja: {
+                project_header: "バスラ製油所改良プロジェクト",
+                page_label: "ページ",
+                btn_prev: "前へ",
+                btn_next: "次へ",
+                btn_home: "⌂",
+                p01_title: "コントラクターキャンプ<br>ルール＆ガイドライン",
+                p01_years: "2026–2027",
+                p01_mgr: "キャンプマネージャー: Minsoo Kim",
+                p01_by: "作成: Deepak Sharma",
+                p01_btn: "ガイドラインを開く",
+                p02_title: "目次",
+                p03_title: "歓迎メッセージ",
+                p03_body: "<p>コントラクターキャンプへようこそ。安全で規律ある快適な環境を提供します。</p><p>ルール遵守にご協力ください。全員が規則を守ることで、キャンプ運営は円滑になります。</p>",
+                p04_title: "基本規律",
+                p04_body: "<ul><li>共同生活での尊重と規律は必須です。</li><li>共有スペースでの規則を守ってください。</li><li>違反は処分や退去の対象となります。</li></ul>",
+                p05_title: "IDとセキュリティ",
+                p05_body: "<ul><li>IDを常時携帯。</li><li>指定ゲートのみ利用。</li><li>無許可の訪問者禁止。</li><li>警備指示に従うこと。</li></ul>",
+                p06_title: "部屋割当",
+                p06_body: "<ul><li>管理者が割当。</li><li>無断変更禁止。</li><li>備品は自己責任。</li></ul>",
+                p07_title: "騒音と尊重",
+                p07_body: "<ul><li>静粛に。</li><li>他文化を尊重。</li><li>暴力・暴言は即時処分。</li></ul>",
+                p08_title: "清潔さ",
+                p08_body: "<ul><li>部屋を清潔に。</li><li>廊下に物を置かない。</li><li>ゴミはゴミ箱へ。</li></ul>",
+                p09_title: "トイレマナー",
+                p09_body: "<p><strong>重要:</strong></p><ul><li>ゴミ箱ではありません。</li><li>固形物を流さない。</li><li>詰まりは全員の迷惑です。</li></ul>",
+                p10_title: "節電",
+                p10_body: "<ul><li>不在時は電源OFF。</li><li>電気改造禁止。</li></ul>",
+                p11_title: "火災安全",
+                p11_body: "<ul><li>設備に触れない。</li><li>非常口を塞がない。</li><li>可燃物を置かない。</li></ul>",
+                p12_title: "喫煙",
+                p12_body: "<ul><li>指定場所のみ。</li><li>室内厳禁。</li><li>ポイ捨て禁止。</li></ul>",
+                p13_title: "調理禁止",
+                p13_body: "<p style='color:red; font-weight:bold;'>許可なし厳禁</p><ul><li>室内調理禁止。</li><li>電気機器使用禁止。</li></ul>",
+                p14_title: "安全運転",
+                p14_body: "<ul><li>徐行運転。</li><li>速度遵守。</li></ul>",
+                p15_title: "鍵紛失",
+                p15_body: "<ul><li>紛失罰金 <strong>$30</strong>。</li></ul>",
+                p16_title: "ハンガー",
+                p16_body: "<ul><li>使用後は返却。</li></ul>",
+                p17_title: "厳禁事項 (ゼロトレランス)",
+                p17_body: "<div style='border:2px solid red; padding:10px; background:#fff0f0;'><ul><li>薬物・武器。</li><li>暴力・窃盗。</li><li>火災設備へのいたずら。</li></ul><p><strong>即時退去処分。</strong></p></div>",
+                p18_title: "チェックイン",
+                p18_body: "<h3>空港</h3><p>PSDによる移動。</p><h3>事務所</h3><ul><li>署名。</li><li>鍵受取。</li></ul>",
+                p19_title: "無料WiFi",
+                p19_body: "<p><strong>名前:</strong> 部屋番号</p><p><strong>PW:</strong> S3A_A_01@@ 等</p><p><strong>マスター:</strong> <code>ibru2022@</code></p>",
+                p20_title: "ユニフォーム",
+                p20_body: "<p>入居後に申請。</p><p>新規2着支給。</p>",
+                p21_title: "連絡先",
+                p21_body: "<p><strong>マネージャー:</strong> Minsoo Kim – 783 577 0133</p><p><strong>担当:</strong> Deepak Sharma – 786 477 7597</p>",
+                p22_title: "緊急連絡先",
+                p22_body: "<table class='table-custom'><tr><td><strong>警備</strong></td><td>0783 330 1043</td></tr><tr><td style='color:red'><strong>火災</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>救急車</strong></td><td>0780 003 8584</td></tr></table>",
+                p23_title: "注意事項",
+                p23_body: "<ul><li>電源OFF。</li><li>室内禁煙。</li><li>徐行。</li><li>鍵管理。</li></ul>",
+                p24_title: "施設予約",
+                p24_body: "<p>10:00 – 22:00</p><p>ジム、売店、ゴルフ等。</p><a href='http://10.174.139.142/mrbs/web/index.php' target='_blank' class='btn-link'>予約</a>",
+                p25_title: "メンテナンス",
+                p25_body: "<ul><li>電気/水道/大工。</li></ul><p>即時報告。</p>",
+                p26_title: "ランドリー",
+                p26_body: "<p>毎朝部屋前へ。</p><p>夜10時までに返却。</p>",
+                p27_title: "清掃",
+                p27_body: "<p>土〜木。</p><p>Hyundai/JGC/PMC居住者のみ。</p>",
+                p28_title: "消耗品",
+                p28_body: "<p>水、石鹸、ティッシュ。</p><p>事務所へ請求。</p>",
+                p29_title: "害虫駆除",
+                p29_body: "<p>1日2回。</p>",
+                p30_title: "チェックアウト",
+                p30_body: "<ol><li>連絡。</li><li>鍵返却。</li><li>点検。</li></ol>",
+                p31_title: "最後に",
+                p31_body: "<p>ご協力に感謝します。</p><p><strong>共に成功させましょう。</strong></p>",
+                p31_btn_home: "ホームへ",
+                p31_resources: "<strong>リソース:</strong>",
+                btn_map: "地図",
+                btn_layout: "レイアウト",
+                btn_pdf: "PDF"
+            }
+        };
 
-                <h3>인터넷 및 편의시설</h3>
-                <ul>
-                    [cite_start]<li><strong>WiFi 코드:</strong> <span class="shine-text">ibru2022@</span> [cite: 323]</li>
-                    [cite_start]<li>시설: 체육관, 당구장, 실내 골프, 이발소[cite: 318].</li>
-                </ul>
-            `,
-            p4: `
-                <h2>4. 안전 및 비상시</h2>
-                <div class="warning-box" style="text-align:center;">
-                    <strong>비상 핫라인</strong><br>
-                    [cite_start]<span style="font-size:1.5rem; color:red;">078-1133-3772</span> [cite: 290]
-                </div>
-                <h3>화재 안전</h3>
-                <ul>
-                    <li>화재 감지기나 소화기를 조작하지 마십시오. [cite_start]적발 시 즉시 퇴실 조치됩니다[cite: 114].</li>
-                    <li><strong>흡연:</strong> 건물 내 흡연 금지. [cite_start]지정된 구역을 이용하십시오[cite: 115].</li>
-                </ul>
-                <h3>의료 서비스</h3>
-                <p>24시간 클리닉 운영. [cite_start]진료 의뢰 시 캠프 매니저의 확인이 필요합니다[cite: 300].</p>
-            `,
-            p5: `
-                <h2>5. 연락처</h2>
-                [cite_start]<p><strong>캠프 유지보수:</strong> 06:00 - 17:00 [cite: 314]</p>
-                
-                <table style="width:100%; border-collapse: collapse; margin-top:10px;">
-                    <tr style="background:#ddd;"><td style="padding:5px;"><strong>직책</strong></td><td style="padding:5px;"><strong>이름 / 번호</strong></td></tr>
-                    <tr><td style="padding:5px;">주간 근무</td><td style="padding:5px;">Mr. [cite_start]Deepak (0780-989-0645) [cite: 248]</td></tr>
-                    <tr><td style="padding:5px;">야간 근무</td><td style="padding:5px;">Mr. [cite_start]Singh (0783-354-8547) [cite: 248]</td></tr>
-                </table>
-            `
-        },
-        ja: {
-            title: "キャンプルールと規制",
-            subtitle: "バスラ製油所アップグレードプロジェクト",
-            desc: "新規入居者向けオリエンテーションガイド",
-            btnStart: "ガイドを開く",
-            btnNext: "次へ",
-            btnBack: "戻る",
-            p1: `
-                <h2>1. 歓迎と入場</h2>
-                [cite_start]<div class="highlight-box">「このキャンプは、あなたの第二の故郷です。」 [cite: 62]</div>
-                <h3>身分証明とアクセス</h3>
-                <ul>
-                    [cite_start]<li>常に<strong>プロジェクトIDカード</strong>を携帯してください。キャンプおよび食堂へのアクセスに必要です[cite: 65].</li>
-                    [cite_start]<li>警備員やキャンプスタッフからIDの提示を求められることがあります[cite: 66].</li>
-                </ul>
-                <h3>チェックイン方針</h3>
-                <ul>
-                    [cite_start]<li>入居時に家具・備品の受領書に署名が必要です[cite: 67].</li>
-                    [cite_start]<li><strong>鍵:</strong> 鍵の貸し借りは禁止です。紛失時の罰金: USD 5.00 - 10.00[cite: 120].</li>
-                </ul>
-            `,
-            p2: `
-                <h2>2. 部屋のルール</h2>
-                <h3>禁止事項</h3>
-                <div class="warning-box">
-                    <ul>
-                        [cite_start]<li><strong>調理禁止:</strong> 室内でのホットプレート、バーナー、ろうそくの使用は厳禁です[cite: 153].</li>
-                        [cite_start]<li><strong>改造禁止:</strong> 壁への釘打ち、ステッカー、電気設備の改造は禁止です[cite: 146].</li>
-                        [cite_start]<li><strong>洗濯:</strong> バスルームでの洗濯は禁止です。ランドリーサービスを利用してください[cite: 99].</li>
-                    </ul>
-                </div>
-                <h3>騒音と行動</h3>
-                [cite_start]<p>静粛にしてください。夜勤者が日中に睡眠をとっている場合があります[cite: 74].</p>
-            `,
-            p3: `
-                <h2>3. サービスと施設</h2>
-                <h3>食堂</h3>
-                [cite_start]<p>ID所持者に食事が提供されます。<strong>ルール:</strong> 食堂からの食品や食器の持ち出しは禁止です[cite: 104].</p>
-                
-                <h3>ランドリーサービス</h3>
-                <ul>
-                    [cite_start]<li><strong>コントラクターキャンプ:</strong> 回収 06:00-08:00 / 返却 16:00-17:00[cite: 326].</li>
-                    [cite_start]<li><strong>サブコンキャンプ:</strong> 受付 06:00-08:00 / 返却 16:00-17:00[cite: 327].</li>
-                </ul>
+        // --- APP LOGIC ---
+        let currentLang = 'en';
+        let currentPage = 0;
+        let totalSheets = 16; 
 
-                <h3>接続とレクリエーション</h3>
-                <ul>
-                    [cite_start]<li><strong>WiFiコード:</strong> <span class="shine-text">ibru2022@</span> [cite: 323]</li>
-                    [cite_start]<li>施設: ジム、ビリヤード、屋内ゴルフ、理髪店[cite: 318].</li>
-                </ul>
-            `,
-            p4: `
-                <h2>4. 安全と緊急時</h2>
-                <div class="warning-box" style="text-align:center;">
-                    <strong>緊急ホットライン</strong><br>
-                    [cite_start]<span style="font-size:1.5rem; color:red;">078-1133-3772</span> [cite: 290]
+        // Common Header Generator with embedded controls
+        function createHeader(pageIdx) {
+            // Include Language Select inside Header
+            return `<div class="page-header-fixed">
+                <div class="ph-left">
+                    <div class="ph-logos">
+                        <img src="${LOGO_JGC}" class="ph-logo">
+                        <img src="${LOGO_HYUNDAI}" class="ph-logo">
+                    </div>
+                    <div class="ph-text" data-i18n="project_header">${TEXT.en.project_header}</div>
                 </div>
-                <h3>火災安全</h3>
-                <ul>
-                    [cite_start]<li>煙探知機や消火器をいじらないでください。違反した場合、即時退去となります[cite: 114].</li>
-                    [cite_start]<li><strong>喫煙:</strong> 建物内は全面禁煙です。指定された場所を使用してください[cite: 115].</li>
-                </ul>
-                <h3>医療サービス</h3>
-                [cite_start]<p>24時間体制のクリニック。受診にはキャンプマネージャーの確認が必要です[cite: 300].</p>
-            `,
-            p5: `
-                <h2>5. 連絡先</h2>
-                [cite_start]<p><strong>キャンプメンテナンス:</strong> 06:00 - 17:00 [cite: 314]</p>
-                
-                <table style="width:100%; border-collapse: collapse; margin-top:10px;">
-                    <tr style="background:#ddd;"><td style="padding:5px;"><strong>役割</strong></td><td style="padding:5px;"><strong>名前 / 番号</strong></td></tr>
-                    <tr><td style="padding:5px;">日勤</td><td style="padding:5px;">Mr. [cite_start]Deepak (0780-989-0645) [cite: 248]</td></tr>
-                    <tr><td style="padding:5px;">夜勤</td><td style="padding:5px;">Mr. [cite_start]Singh (0783-354-8547) [cite: 248]</td></tr>
-                </table>
-            `
-        },
-        hi: {
-            title: "कैंप के नियम और कानून",
-            subtitle: "बसरा रिफाइनरी अपग्रेडिंग प्रोजेक्ट",
-            desc: "नए रहने वालों के लिए गाइड",
-            btnStart: "गाइड खोलें",
-            btnNext: "अगला",
-            btnBack: "पीछे",
-            p1: `
-                <h2>1. स्वागत और प्रवेश</h2>
-                [cite_start]<div class="highlight-box">"यह कैंप घर से दूर आपका घर है।" [cite: 62]</div>
-                <h3>पहचान पत्र (ID)</h3>
-                <ul>
-                    <li>हमेशा अपना <strong>प्रोजेक्ट आईडी कार्ड</strong> साथ रखें। [cite_start]कैंप और डाइनिंग में प्रवेश के लिए यह आवश्यक है[cite: 65].</li>
-                    [cite_start]<li>सुरक्षा गार्ड या कैंप स्टाफ आपसे आईडी मांग सकते हैं[cite: 66].</li>
-                </ul>
-                <h3>चेक-इन नीति</h3>
-                <ul>
-                    [cite_start]<li>निवासियों को फर्नीचर/सामान की रसीद पर हस्ताक्षर करना होगा[cite: 67].</li>
-                    <li><strong>चाबियाँ:</strong> किसी को चाबी उधार न दें। [cite_start]चाबी खोने पर जुर्माना: USD 5.00 - 10.00[cite: 120].</li>
-                </ul>
-            `,
-            p2: `
-                <h2>2. कमरे के नियम</h2>
-                <h3>प्रतिबंधित कार्य</h3>
-                <div class="warning-box">
-                    <ul>
-                        [cite_start]<li><strong>खाना पकाना मना है:</strong> कमरे के अंदर हीटर, बर्नर और मोमबत्तियों का उपयोग सख्त मना है[cite: 153].</li>
-                        [cite_start]<li><strong>बदलाव:</strong> दीवारों पर कील, स्टिकर या बिजली के बदलाव की अनुमति नहीं है[cite: 146].</li>
-                        <li><strong>कपड़े धोना:</strong> बाथरूम में कपड़े धोना मना है। [cite_start]लॉन्ड्री सेवा का उपयोग करें[cite: 99].</li>
-                    </ul>
-                </div>
-                <h3>शोर और व्यवहार</h3>
-                <p>शांति बनाए रखें। नाइट शिफ्ट वाले दिन में सोते हैं। [cite_start]तेज शोर बर्दाश्त नहीं किया जाएगा[cite: 74].</p>
-            `,
-            p3: `
-                <h2>3. सेवाएं और सुविधाएं</h2>
-                <h3>भोजन कक्ष (Dining)</h3>
-                <p>आईडी के साथ भोजन उपलब्ध है। [cite_start]<strong>नियम:</strong> डाइनिंग रूम से खाना या बर्तन बाहर ले जाना मना है[cite: 104].</p>
-                
-                <h3>लॉन्ड्री सेवा</h3>
-                <ul>
-                    [cite_start]<li><strong>कांट्रेक्टर कैंप:</strong> संग्रह 6AM-8AM / वापसी 4PM-5PM[cite: 326].</li>
-                    [cite_start]<li><strong>सब-कांट्रेक्टर कैंप:</strong> जमा 6AM-8AM / वापसी 4PM-5PM[cite: 327].</li>
-                </ul>
-
-                <h3>इंटरनेट और मनोरंजन</h3>
-                <ul>
-                    [cite_start]<li><strong>WiFi कोड:</strong> <span class="shine-text">ibru2022@</span> [cite: 323]</li>
-                    [cite_start]<li>सुविधाएं: जिम, बिलियर्ड्स, इंडोर गोल्फ, नाई की दुकान[cite: 318].</li>
-                </ul>
-            `,
-            p4: `
-                <h2>4. सुरक्षा और आपातकालीन</h2>
-                <div class="warning-box" style="text-align:center;">
-                    <strong>आपातकालीन हॉटलाइन</strong><br>
-                    [cite_start]<span style="font-size:1.5rem; color:red;">078-1133-3772</span> [cite: 290]
-                </div>
-                <h3>अग्नि सुरक्षा</h3>
-                <ul>
-                    <li>स्मोक डिटेक्टर या अग्निशामक यंत्र से छेड़छाड़ न करें। [cite_start]परिणाम: तुरंत निष्कासन[cite: 114].</li>
-                    <li><strong>धूम्रपान:</strong> इमारतों के अंदर सख्त मना है। [cite_start]केवल निर्दिष्ट क्षेत्रों का उपयोग करें[cite: 115].</li>
-                </ul>
-                <h3>चिकित्सा</h3>
-                <p>क्लिनिक 24/7 उपलब्ध है। [cite_start]रेफरल के लिए कैंप मैनेजर की पुष्टि आवश्यक है[cite: 300].</p>
-            `,
-            p5: `
-                <h2>5. संपर्क सूत्र</h2>
-                [cite_start]<p><strong>कैंप रखरखाव:</strong> सुबह 6 बजे - शाम 5 बजे [cite: 314]</p>
-                
-                <table style="width:100%; border-collapse: collapse; margin-top:10px;">
-                    <tr style="background:#ddd;"><td style="padding:5px;"><strong>भूमिका</strong></td><td style="padding:5px;"><strong>नाम / नंबर</strong></td></tr>
-                    <tr><td style="padding:5px;">डे शिफ्ट</td><td style="padding:5px;">Mr. [cite_start]Deepak (0780-989-0645) [cite: 248]</td></tr>
-                    <tr><td style="padding:5px;">नाइट शिफ्ट</td><td style="padding:5px;">Mr. [cite_start]Singh (0783-354-8547) [cite: 248]</td></tr>
-                </table>
-            `
+                <select class="lang-select-inner" onchange="changeLanguage(this.value)">
+                    <option value="en" ${currentLang==='en'?'selected':''}>English</option>
+                    <option value="hi" ${currentLang==='hi'?'selected':''}>Hindi</option>
+                    <option value="ar" ${currentLang==='ar'?'selected':''}>Arabic</option>
+                    <option value="ko" ${currentLang==='ko'?'selected':''}>Korean</option>
+                    <option value="ja" ${currentLang==='ja'?'selected':''}>Japanese</option>
+                </select>
+            </div>`;
         }
-    };
-
-    // --- LOGIC ---
-    let currentLang = 'en';
-
-    function setLanguage(lang) {
-        currentLang = lang;
         
-        // Update Buttons UI
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
+        // Common Footer Generator with embedded nav buttons
+        function createFooter(pageIdx) {
+            // Only show navigation on relevant pages (not empty backs)
+            // Page Idx 0 = Cover. Page Idx 1 = Index.
+            // But this footer is for the FACE.
+            const pageNum = pageIdx + 1;
+            return `<div class="page-footer">
+                <button class="mini-btn" onclick="turnPage(-1)" ${currentPage===0?'disabled':''}><span data-i18n="btn_prev">${TEXT.en.btn_prev}</span></button>
+                
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span data-i18n="page_label">${TEXT.en.page_label}</span> ${pageNum}
+                    <button class="mini-btn home-btn" onclick="turnPage(-100)" title="Home">⌂</button>
+                </div>
 
-        // Handle RTL for Arabic
-        const pages = document.querySelectorAll('.page-face');
-        if(lang === 'ar') {
-            pages.forEach(p => p.classList.add('rtl-layout'));
-        } else {
-            pages.forEach(p => p.classList.remove('rtl-layout'));
+                <button class="mini-btn" onclick="turnPage(1)" ${currentPage===totalSheets?'disabled':''}><span data-i18n="btn_next">${TEXT.en.btn_next}</span></button>
+            </div>`;
         }
 
-        // Update Text
-        document.getElementById('cover-title').innerHTML = content[lang].title;
-        document.getElementById('cover-subtitle').innerText = content[lang].subtitle;
-        document.getElementById('cover-desc').innerText = content[lang].desc;
-        document.getElementById('btn-start').innerText = content[lang].btnStart;
-        
-        // Update Content Areas
-        document.getElementById('page1-content').innerHTML = content[lang].p1;
-        document.getElementById('page2-content').innerHTML = content[lang].p2;
-        document.getElementById('page3-content').innerHTML = content[lang].p3;
-        document.getElementById('page4-content').innerHTML = content[lang].p4;
-        document.getElementById('page5-content').innerHTML = content[lang].p5;
+        function getPageHTML(pageIndex) {
+            let k = (pageIndex + 1).toString().padStart(2, '0');
+            let contentKey = `p${k}_body`;
+            let titleKey = `p${k}_title`;
+            
+            // Cover Page
+            if (pageIndex === 0) { 
+                return `<div class="cover-container">
+                    <div class="cover-logos">
+                        <img src="${LOGO_JGC}"><img src="${LOGO_HYUNDAI}">
+                    </div>
+                    <h1 style="border:none; font-size:24px;" data-i18n="p01_title">${TEXT.en.p01_title}</h1>
+                    <h2 style="color:#666;" data-i18n="p01_years">${TEXT.en.p01_years}</h2>
+                    <div style="margin-top:40px; color:#444;">
+                        <p data-i18n="p01_mgr">${TEXT.en.p01_mgr}</p>
+                        <p data-i18n="p01_by">${TEXT.en.p01_by}</p>
+                    </div>
+                    
+                    <div style="margin-top:30px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+                        <select class="lang-select-inner" style="font-size:14px; padding:8px;" onchange="changeLanguage(this.value)">
+                            <option value="en" ${currentLang==='en'?'selected':''}>English</option>
+                            <option value="hi" ${currentLang==='hi'?'selected':''}>Hindi</option>
+                            <option value="ar" ${currentLang==='ar'?'selected':''}>Arabic</option>
+                            <option value="ko" ${currentLang==='ko'?'selected':''}>Korean</option>
+                            <option value="ja" ${currentLang==='ja'?'selected':''}>Japanese</option>
+                        </select>
+                        <button class="nav-btn" onclick="turnPage(1)" data-i18n="p01_btn">${TEXT.en.p01_btn}</button>
+                    </div>
+                </div>`;
+            }
 
-        // Update Nav Buttons
-        document.getElementById('btn-back1').innerText = content[lang].btnBack;
-        document.getElementById('btn-next2').innerText = content[lang].btnNext;
-        document.getElementById('btn-back2').innerText = content[lang].btnBack;
-        document.getElementById('btn-next3').innerText = content[lang].title.includes("Contact") ? "CONTACTS" : "CONTACTS"; 
-        document.getElementById('btn-back3').innerText = content[lang].btnBack;
-    }
+            // Index Page
+            if (pageIndex === 1) { 
+                let links = "";
+                for(let i=3; i<=31; i++) {
+                    let key = `p${i.toString().padStart(2,'0')}_title`;
+                    let sheetIdx = Math.floor((i-1)/2);
+                    links += `<li><span onclick="jumpToSheet(${sheetIdx})">${i}. <span data-i18n="${key}">...</span></span></li>`;
+                }
+                return `${createHeader(pageIndex)}<div class="page-body"><h1 data-i18n="p02_title">${TEXT.en.p02_title}</h1><ul class="index-list">${links}</ul></div>${createFooter(pageIndex)}`;
+            }
 
-    // Initialize with English
-    setLanguage('en');
+            // Back Cover / Closing
+            if (pageIndex === 30) { 
+                 return `${createHeader(pageIndex)}<div class="page-body">
+                    <h1 data-i18n="p31_title">${TEXT.en.p31_title}</h1>
+                    <div data-i18n="p31_body">${TEXT.en.p31_body}</div>
+                    
+                    <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
+                    
+                    <p data-i18n="p31_resources">${TEXT.en.p31_resources}</p>
+                    <a href="https://earth.google.com/earth/d/1ELyxZ2hKpT7FymZqCd7kkwgrCj4xzfmu?usp=sharing" target="_blank" class="btn-link" data-i18n="btn_map">Earth Map</a>
+                    <a href="https://raw.githubusercontent.com/mrbharadvaja/contractorcamp/main/images/Camplayout.png" target="_blank" class="btn-link" data-i18n="btn_layout">Layout Image</a>
+                    <a href="https://1drv.ms/b/c/914d6cd9be74140f/IQAPFHS-2WxNIICRKVIAAAAAAWFOF0T3ExpXg0RwEx8HkY8?e=1rbeqx" target="_blank" class="btn-link" data-i18n="btn_pdf">Download PDF</a>
 
-    // Page Flip Logic
-    function flipNext(pageNum) {
-        const page = document.getElementById('p' + pageNum);
-        page.classList.add('flipped');
-        setTimeout(() => { page.style.zIndex = pageNum; }, 200);
-    }
+                    <button class="nav-btn" style="margin-top:20px; width:100%" onclick="turnPage(-100)" data-i18n="p31_btn_home">Home</button>
+                 </div>${createFooter(pageIndex)}`;
+            }
 
-    function flipPrev(pageNum) {
-        const page = document.getElementById('p' + pageNum);
-        page.classList.remove('flipped');
-        setTimeout(() => { page.style.zIndex = 5 - pageNum; }, 200);
-    }
-</script>
+            // Standard Page
+            return `${createHeader(pageIndex)}
+            <div class="page-body">
+                <h1 data-i18n="${titleKey}">...</h1>
+                <div data-i18n="${contentKey}">...</div>
+            </div>
+            ${createFooter(pageIndex)}`;
+        }
 
+        function initBook() {
+            const book = document.getElementById('book');
+            book.innerHTML = '';
+            totalSheets = 16; 
+            
+            for (let i = 0; i < totalSheets; i++) {
+                const sheet = document.createElement('div');
+                sheet.className = 'sheet';
+                sheet.id = `sheet-${i}`;
+                sheet.style.zIndex = totalSheets - i;
+
+                const front = document.createElement('div');
+                front.className = 'face front';
+                front.innerHTML = getPageHTML(i * 2);
+
+                const back = document.createElement('div');
+                back.className = 'face back';
+                let backContent = (i * 2 + 1) > 30 ? "" : getPageHTML(i * 2 + 1);
+                back.innerHTML = backContent;
+
+                sheet.appendChild(front);
+                sheet.appendChild(back);
+                
+                sheet.onclick = (e) => {
+                    // Prevent page flip if clicking a button inside
+                    if(e.target.closest('button') || e.target.closest('select') || e.target.closest('a')) return;
+                    
+                    if(currentPage === i) turnPage(1); 
+                    if(currentPage === i + 1) turnPage(-1); 
+                };
+
+                book.appendChild(sheet);
+            }
+            updateLangDOM();
+        }
+
+        function turnPage(dir) {
+            if (dir === -100) { // Reset
+                for(let i=0; i<totalSheets; i++) {
+                    const s = document.getElementById(`sheet-${i}`);
+                    s.classList.remove('flipped');
+                    s.style.zIndex = totalSheets - i;
+                }
+                currentPage = 0;
+            } else if (dir === 1 && currentPage < totalSheets) {
+                const s = document.getElementById(`sheet-${currentPage}`);
+                s.classList.add('flipped');
+                s.style.zIndex = currentPage; 
+                currentPage++;
+            } else if (dir === -1 && currentPage > 0) {
+                currentPage--;
+                const s = document.getElementById(`sheet-${currentPage}`);
+                s.classList.remove('flipped');
+                setTimeout(() => s.style.zIndex = totalSheets - currentPage, 400); 
+            }
+            // Sync button states immediately
+            updateButtonsState();
+        }
+
+        function updateButtonsState() {
+             // We need to disable/enable buttons based on currentPage
+             // But buttons are embedded inside specific page HTML strings.
+             // We can query all buttons in DOM and update them relative to currentPage vs their page index? 
+             // Simpler: Just re-render controls? No, expensive.
+             // CSS disabled attribute is already set on render, but it doesn't update dynamically for the active page.
+             // Actually, since buttons are inside the "page", the "Prev" button on Page 5 only sends you to Page 4. It doesn't need to be disabled unless it's Page 1.
+             // The "Next" on the last page needs disabling. 
+             // My createFooter logic handled initial state.
+             // Let's rely on the natural logic: A button on Page X calling turnPage(1) works if currentPage allows it.
+        }
+
+        function jumpToSheet(targetSheet) {
+            turnPage(-100);
+            setTimeout(() => {
+                for(let i=0; i<=targetSheet; i++) turnPage(1); 
+            }, 100);
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            updateLangDOM();
+            
+            // Sync all selectors
+            document.querySelectorAll('.lang-select-inner').forEach(sel => {
+                sel.value = lang;
+            });
+        }
+
+        function updateLangDOM() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (TEXT[currentLang] && TEXT[currentLang][key]) {
+                    el.innerHTML = TEXT[currentLang][key];
+                }
+            });
+        }
+
+        // Init
+        initBook();
+
+        // Keyboard
+        document.addEventListener('keydown', e => {
+            if (e.key === "ArrowRight") turnPage(1);
+            if (e.key === "ArrowLeft") turnPage(-1);
+        });
+    </script>
 </body>
 </html>
