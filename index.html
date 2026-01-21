@@ -688,15 +688,17 @@
             // Page Idx 0 = Cover. Page Idx 1 = Index.
             // But this footer is for the FACE.
             const pageNum = pageIdx + 1;
+            // Prev button disabled only on first page (Cover, pageIdx 0)
+            // Next button disabled on last content page (Closing, pageIdx 30)
             return `<div class="page-footer">
-                <button class="mini-btn" onclick="turnPage(-1)" ${currentPage===0?'disabled':''}><span data-i18n="btn_prev">${TEXT.en.btn_prev}</span></button>
+                <button class="mini-btn" onclick="turnPage(-1)" ${pageIdx===0?'disabled':''}><span data-i18n="btn_prev">${TEXT.en.btn_prev}</span></button>
                 
                 <div style="display:flex; align-items:center; gap:8px;">
                     <span data-i18n="page_label">${TEXT.en.page_label}</span> ${pageNum}
                     <button class="mini-btn home-btn" onclick="turnPage(-100)" title="Home">⌂</button>
                 </div>
 
-                <button class="mini-btn" onclick="turnPage(1)" ${currentPage===totalSheets?'disabled':''}><span data-i18n="btn_next">${TEXT.en.btn_next}</span></button>
+                <button class="mini-btn" onclick="turnPage(1)" ${pageIdx>=30?'disabled':''}><span data-i18n="btn_next">${TEXT.en.btn_next}</span></button>
             </div>`;
         }
 
