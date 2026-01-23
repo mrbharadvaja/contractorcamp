@@ -151,13 +151,16 @@
         .mini-btn.home-btn { border-color: transparent; font-size: 14px; }
         .mini-btn:disabled { opacity: 0.3; cursor: default; }
 
-        /* AI Placeholder */
-        .ai-placeholder {
-            margin: 15px 0; padding: 15px; border: 2px dashed #bbb;
-            background: #f8f8f8; color: #666; font-size: 11px;
-            text-align: center; border-radius: 6px; font-style: italic;
+        /* Page Image */
+        .page-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #eee;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: block;
         }
-        .ai-placeholder::before { content: "🖼️ AI IMAGE PLACEHOLDER"; display: block; font-weight: bold; margin-bottom: 5px; color: #444; font-style: normal; }
 
         /* Typography */
         h1 { font-size: 18px; color: var(--primary-navy); margin: 0 0 12px 0; border-bottom: 2px solid var(--primary-blue); padding-bottom: 5px; font-weight: 700; }
@@ -182,8 +185,28 @@
         }
         .index-list li:hover { background: #f9f9f9; color: var(--primary-blue); }
 
-        .cover-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 20px; }
+        /* Cover Container Updates */
+        .cover-container { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: flex-start; /* Changed from center to prevent top clipping */
+            height: 100%; 
+            text-align: center; 
+            padding: 30px 20px; 
+            overflow-y: auto; /* Allow scrolling if content is too tall */
+        }
+        .cover-logos { margin-bottom: 20px; flex-shrink: 0; }
         .cover-logos img { height: 50px; margin: 0 10px; }
+        
+        /* Specific constraint for cover image */
+        .cover-container .page-image {
+            max-height: 250px; 
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            margin-top: 20px;
+        }
 
         /* Mobile */
         @media (max-width: 768px) {
@@ -226,6 +249,40 @@
             ar: ""
         };
 
+        // --- PAGE IMAGES MAPPING ---
+        const PAGE_IMAGES = {
+            1: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/1.png?raw=true",
+            3: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/2.png?raw=true",
+            4: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/3.png?raw=true",
+            5: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/4.png?raw=true",
+            6: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/5.png?raw=true",
+            7: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/6.png?raw=true",
+            8: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/7.png?raw=true",
+            9: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/8.png?raw=true",
+            10: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/9.png?raw=true",
+            11: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/10.png?raw=true",
+            12: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/11.png?raw=true",
+            13: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/12.png?raw=true",
+            14: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/13.png?raw=true",
+            15: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/14.png?raw=true",
+            16: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/15.png?raw=true",
+            17: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/16.png?raw=true",
+            18: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/17.png?raw=true",
+            19: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/18.png?raw=true",
+            20: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/19.png?raw=true",
+            21: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/20.png?raw=true",
+            22: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/21.png?raw=true",
+            23: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/22.png?raw=true",
+            24: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/23.png?raw=true",
+            25: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/24.png?raw=true",
+            26: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/25.png?raw=true",
+            27: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/26.png?raw=true",
+            28: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/27.png?raw=true",
+            29: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/28.png?raw=true",
+            30: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/29.png?raw=true",
+            31: "https://github.com/mrbharadvaja/contractorcamp/blob/main/images/30.png?raw=true"
+        };
+
         const TEXT = {
             en: {
                 project_header: "Basrah Refinery Upgrading Project",
@@ -242,7 +299,7 @@
                 p02_title: "Table of Contents",
                 // Content Pages
                 p03_title: "Welcome Note",
-                p03_body: "<p>Welcome to the Contractor Camp. This camp is your home away from home during the Basrah Refinery Upgrading Project. Our goal is to provide a safe, disciplined, organized, and comfortable living environment for all residents.</p><p>Our camp team is committed to high standards of accommodation, services, and safety. Your cooperation in following these rules and guidelines is essential. When every resident respects the system, the camp runs smoothly and everyone benefits.Camp Manager- Mr Minsoo Kim </p><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Warm welcome message graphic, diverse workforce, professional camp background, safe environment'</div>",
+                p03_body: "<p>Welcome to the Contractor Camp. This camp is your home away from home during the Basrah Refinery Upgrading Project. Our goal is to provide a safe, disciplined, organized, and comfortable living environment for all residents.</p><p>Our camp team is committed to high standards of accommodation, services, and safety. Your cooperation in following these rules and guidelines is essential. When every resident respects the system, the camp runs smoothly and everyone benefits.</p>",
                 
                 p04_title: "General Discipline & Resident Responsibilities",
                 p04_body: "<ul><li>The camp is a shared living community. Respect, discipline, and hygiene are mandatory.</li><li>Residents must follow camp rules in rooms, corridors, dining areas, recreation areas, and all common spaces.</li><li>Misbehavior, repeated complaints, or serious violations may lead to disciplinary action, restriction of camp privileges, or removal from camp.</li></ul>",
@@ -266,7 +323,7 @@
                 p10_body: "<ul><li>Power conservation is mandatory.</li><li>Switch off lights, AC, chargers, and electrical items when not in use.</li><li>Avoid unnecessary electricity usage inside rooms.</li><li>Do not tamper with electrical systems, sockets, or wiring.</li></ul>",
                 
                 p11_title: "Fire Safety Rules (Zero Risk Policy) 🔥",
-                p11_body: "<ul><li>Fire safety is everyone’s responsibility.</li><li>Never tamper with smoke detectors, fire alarms, extinguishers, emergency lights, or any safety equipment.</li><li>Do not block emergency exits, stairways, or access routes.</li><li>Do not store flammable materials inside rooms or corridors.</li><li>Report any fire risk, burning smell, sparks, or electrical issues immediately to camp helpdesk/security.</li></ul><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Fire extinguisher and muster point signage, professional camp environment'</div>",
+                p11_body: "<ul><li>Fire safety is everyone’s responsibility.</li><li>Never tamper with smoke detectors, fire alarms, extinguishers, emergency lights, or any safety equipment.</li><li>Do not block emergency exits, stairways, or access routes.</li><li>Do not store flammable materials inside rooms or corridors.</li><li>Report any fire risk, burning smell, sparks, or electrical issues immediately to camp helpdesk/security.</li></ul>",
                 
                 p12_title: "Smoking Policy (Strictly Controlled) 🚭",
                 p12_body: "<ul><li>Smoking is allowed only in designated cigarette shelters.</li><li>Smoking is strictly prohibited in rooms, toilets, corridors, and all indoor areas.</li><li>Do not throw cigarette butts on the ground. Use proper disposal points.</li><li>Smoking violations will be treated seriously due to fire risk.</li></ul>",
@@ -296,10 +353,10 @@
                 p20_body: "<p>After receiving your Room Key, fill out the Uniform Request Form. Provide accurate shirt and pant size details. Uniform will be issued based on the sizes you submit.</p><table class='table-custom'><tr><th>Item</th><th>Sizes</th></tr><tr><td>Shirt (cm)</td><td>90 | 95 | 100 | 105 | 110</td></tr><tr><td>Pant</td><td>30 | 32 | 34 | 36 | 38</td></tr></table><p><strong>Allocation:</strong><br>New Arrival: 02 pairs<br>After one year: 01 pair</p>",
                 
                 p21_title: "Camp Support Contacts (Help Desk) 📞",
-                p21_body: "<p><strong>Camp Manager:</strong> Minsoo Kim – 783 577 0133</p><p><strong>Camp Incharge:</strong> Deepak Sharma – 786 477 7597</p><p><strong>Office Staff:</strong> Mahesh Pandey – 786 160 6036</p><p><strong>Office Staff:</strong> Pankaj – 784 888 9590</p><p>Residents should contact the Camp Office for official requests and clarifications.</p>",
+                p21_body: "<p><strong>Camp Manager:</strong> Minsoo Kim – 783 577 0133</p><p><strong>Camp Incharge:</strong> Deepak Sharma – 786 477 7597</p><p><strong>Office Staff:</strong> Mahesh Pandey – 786 160 6036</p><p><strong>Office Staff:</strong> Pankaj – 784 888 9590</p><p><strong>Office Staff:</strong> Aakash Mishra – 0787 008 1266</p><p>Residents should contact the Camp Office for official requests and clarifications.</p>",
                 
                 p22_title: "Emergency Hotline Numbers (Critical) 🚨",
-                p22_body: "<table class='table-custom'><tr><td><strong>JGC Security Manager</strong></td><td>Mr. Uchino – 0783 330 1043</td></tr><tr><td><strong>Security</strong></td><td>0781 133 3778 / 3779</td></tr><tr><td style='color:red'><strong>Fire Alert</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>HSE Phone</strong></td><td>0781 133 3772</td></tr><tr><td><strong>Ambulance</strong></td><td>0780 003 8584 / 0780 968 1117</td></tr><tr><td><strong>Clinic Doctor</strong></td><td>0780 003 6327</td></tr></table><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Emergency response poster, modern corporate style'</div>",
+                p22_body: "<table class='table-custom'><tr><td><strong>JGC Security Manager</strong></td><td>Mr. Uchino – 0783 330 1043</td></tr><tr><td><strong>Security</strong></td><td>0781 133 3778 / 3779</td></tr><tr><td style='color:red'><strong>Fire Alert</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>HSE Phone</strong></td><td>0781 133 3772</td></tr><tr><td><strong>Ambulance</strong></td><td>0780 003 8584 / 0780 968 1117</td></tr><tr><td><strong>Clinic Doctor</strong></td><td>0780 003 6327</td></tr></table>",
                 
                 p23_title: "Camp Advisory (Daily Life Reminders) 📢",
                 p23_body: "<ul><li><strong>Power Conservation:</strong> turn off power when you are not in your room.</li><li><strong>Smoking Policy:</strong> use designated cigarette shelters only.</li><li><strong>Toilet Etiquette:</strong> do not throw food, tissues, or waste inside toilets.</li><li><strong>Laundry Hanger Return:</strong> return extra hangers to camp office after use.</li><li><strong>Speed Limit:</strong> drive slowly inside camp.</li><li><strong>Room Key Loss:</strong> $30 fine for replacement.</li><li><strong>Cooking:</strong> strictly prohibited without Camp Manager approval.</li></ul>",
@@ -308,7 +365,7 @@
                 p24_body: "<p>The camp provides various facilities for comfort and recreation.</p><p><strong>Timings:</strong><br>Weekday: 10:00 – 22:00<br>Friday / Holiday: 06:00 – 21:00</p><p><strong>Available:</strong> Indoor Golf, Karaoke Room, PlayStation Zone, Healing Room, Carrom, Barber Shop, Mini Market, Sports Ground, Party Room, BBQ Area, Gym, Church, Mosque.</p><a href='http://10.174.139.142/mrbs/web/index.php' target='_blank' class='btn-link'>Book Facility Online</a>",
                 
                 p25_title: "Camp Maintenance Support 🛠️",
-                p25_body: "<p>A dedicated maintenance team is available to handle:</p><ul><li>Electrical Support</li><li>Plumbing Services</li><li>Carpentry Work</li></ul><p>Report maintenance issues promptly to ensure quick action and smooth living conditions.</p>",
+                p25_body: "<p>A dedicated maintenance team is available:</p><ul><li><strong>Manish:</strong> 0784 619 8821</li><li><strong>Misbah Ali:</strong> 0784 439 4881</li><li><strong>Electrician (Mr. James):</strong> 0783 577 1195</li><li><strong>Carpenter (Mr. YK Yoo):</strong> 0783 468 4057</li><li><strong>Plumber (Mr. SW Kim):</strong> 0783 577 0171</li></ul><p>Report maintenance issues promptly to ensure quick action.</p>",
                 
                 p26_title: "Laundry Service 🧺",
                 p26_body: "<p>Daily laundry service is available. Every morning, place your laundry (uniform, personal clothes, bedding covers only) in front of your room in the corridor area.</p><p><strong>Collection:</strong> 6 AM, 10 AM, 2 PM</p><p><strong>Delivery:</strong> Clean laundry will be delivered before 10 PM daily.</p>",
@@ -346,7 +403,7 @@
                 p01_btn: "गाइडलाइन्स खोलें",
                 p02_title: "विषय सूची",
                 p03_title: "स्वागत संदेश",
-                p03_body: "<p>कॉन्ट्रैक्टर कैंप में आपका स्वागत है। Basrah Refinery Upgrading Project के दौरान यह कैंप आपका “दूसरा घर” है। हमारा उद्देश्य सभी निवासियों के लिए सुरक्षित, अनुशासित, व्यवस्थित और आरामदायक रहने का वातावरण प्रदान करना है।</p><p>हमारी टीम आवास, सेवाओं और सुरक्षा के उच्च मानकों के लिए प्रतिबद्ध है। इन नियमों और दिशानिर्देशों का पालन करना सभी के लिए आवश्यक है। जब हर निवासी नियमों का सम्मान करता है, तो कैंप सुचारू रूप से चलता है और सभी को लाभ होता है।</p><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Warm welcome message graphic, diverse workforce, professional camp background, safe environment'</div>",
+                p03_body: "<p>कॉन्ट्रैक्टर कैंप में आपका स्वागत है। Basrah Refinery Upgrading Project के दौरान यह कैंप आपका “दूसरा घर” है। हमारा उद्देश्य सभी निवासियों के लिए सुरक्षित, अनुशासित, व्यवस्थित और आरामदायक रहने का वातावरण प्रदान करना है।</p><p>हमारी टीम आवास, सेवाओं और सुरक्षा के उच्च मानकों के लिए प्रतिबद्ध है। इन नियमों और दिशानिर्देशों का पालन करना सभी के लिए आवश्यक है। जब हर निवासी नियमों का सम्मान करता है, तो कैंप सुचारू रूप से चलता है और सभी को लाभ होता है।</p>",
                 p04_title: "सामान्य अनुशासन एवं निवासी जिम्मेदारी",
                 p04_body: "<ul><li>यह कैंप एक साझा रहने वाला समुदाय है। सम्मान, अनुशासन और स्वच्छता अनिवार्य है।</li><li>निवासियों को कमरे, कॉरिडोर, डाइनिंग, रिक्रिएशन और सभी सामान्य स्थानों पर नियमों का पालन करना होगा।</li><li>गलत व्यवहार, बार-बार शिकायतें या गंभीर उल्लंघन पर अनुशासनात्मक कार्रवाई, सुविधाओं पर प्रतिबंध या कैंप से निष्कासन हो सकता है।</li></ul>",
                 p05_title: "पहचान पत्र, प्रवेश/निकास एवं सुरक्षा 🛂",
@@ -362,7 +419,7 @@
                 p10_title: "बिजली बचत एवं ऊर्जा नियंत्रण ⚡",
                 p10_body: "<ul><li>बिजली की बचत अनिवार्य है।</li><li>उपयोग न होने पर लाइट, AC, चार्जर और इलेक्ट्रिकल आइटम बंद करें।</li><li>कमरे में अनावश्यक बिजली उपयोग न करें।</li><li>वायरिंग, सॉकेट या इलेक्ट्रिकल सिस्टम से छेड़छाड़ न करें।</li></ul>",
                 p11_title: "फायर सेफ्टी नियम (Zero Risk Policy) 🔥",
-                p11_body: "<ul><li>फायर सेफ्टी सबकी जिम्मेदारी है।</li><li>स्मोक डिटेक्टर, फायर अलार्म, एक्सटिंग्विशर, इमरजेंसी लाइट आदि से छेड़छाड़ न करें।</li><li>इमरजेंसी एग्जिट, सीढ़ियों या रास्तों को ब्लॉक न करें।</li><li>ज्वलनशील सामान कमरे या कॉरिडोर में न रखें।</li><li>जलने की गंध, स्पार्क, फायर रिस्क या इलेक्ट्रिकल समस्या तुरंत रिपोर्ट करें।</li></ul><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Fire extinguisher and muster point signage, professional camp environment'</div>",
+                p11_body: "<ul><li>फायर सेफ्टी सबकी जिम्मेदारी है।</li><li>स्मोक डिटेक्टर, फायर अलार्म, एक्सटिंग्विशर, इमरजेंसी लाइट आदि से छेड़छाड़ न करें।</li><li>इमरजेंसी एग्जिट, सीढ़ियों या रास्तों को ब्लॉक न करें।</li><li>ज्वलनशील सामान कमरे या कॉरिडोर में न रखें।</li><li>जलने की गंध, स्पार्क, फायर रिस्क या इलेक्ट्रिकल समस्या तुरंत रिपोर्ट करें।</li></ul>",
                 p12_title: "स्मोकिंग पॉलिसी (कड़ी व्यवस्था) 🚭",
                 p12_body: "<ul><li>धूम्रपान केवल निर्धारित स्मोकिंग शेल्टर में ही करें।</li><li>कमरे, टॉयलेट, कॉरिडोर और सभी इनडोर एरिया में स्मोकिंग सख्त मना है।</li><li>सिगरेट के टुकड़े जमीन पर न फेंके। सही जगह पर डालें।</li><li>फायर रिस्क के कारण स्मोकिंग उल्लंघन पर कड़ी कार्रवाई होगी।</li></ul>",
                 p13_title: "कुकिंग नियम (अनुमति बिना सख्त मना) 🍳❌",
@@ -382,15 +439,15 @@
                 p20_title: "स्टाफ यूनिफॉर्म जारी करने की प्रक्रिया 👕",
                 p20_body: "<p>रूम की चाबी मिलने के बाद: यूनिफॉर्म रिक्वेस्ट फॉर्म भरें। शर्ट और पैंट का सही साइज दें। दिए गए साइज के अनुसार यूनिफॉर्म जारी होगी।</p><table class='table-custom'><tr><th>Item</th><th>Sizes</th></tr><tr><td>Shirt (cm)</td><td>90 | 95 | 100 | 105 | 110</td></tr><tr><td>Pant</td><td>30 | 32 | 34 | 36 | 38</td></tr></table><p><strong>मात्रा:</strong><br>नई आगमन: 02 जोड़े<br>एक साल बाद: 01 जोड़ा</p>",
                 p21_title: "कैंप सपोर्ट कॉन्टैक्ट (Help Desk) 📞",
-                p21_body: "<p><strong>Camp Manager:</strong> Minsoo Kim – 783 577 0133</p><p><strong>Camp Incharge:</strong> Deepak Sharma – 786 477 7597</p><p><strong>Office Staff:</strong> Mahesh Pandey – 786 160 6036</p><p><strong>Office Staff:</strong> Pankaj – 784 888 9590</p><p>ऑफिशियल रिक्वेस्ट/स्पष्टीकरण के लिए कैंप ऑफिस से संपर्क करें।</p>",
+                p21_body: "<p><strong>Camp Manager:</strong> Minsoo Kim – 783 577 0133</p><p><strong>Camp Incharge:</strong> Deepak Sharma – 786 477 7597</p><p><strong>Office Staff:</strong> Mahesh Pandey – 786 160 6036</p><p><strong>Office Staff:</strong> Pankaj – 784 888 9590</p><p><strong>Office Staff:</strong> Aakash Mishra – 0787 008 1266</p><p>ऑफिशियल रिक्वेस्ट/स्पष्टीकरण के लिए कैंप ऑफिस से संपर्क करें।</p>",
                 p22_title: "आपातकालीन हेल्पलाइन नंबर 🚨",
-                p22_body: "<table class='table-custom'><tr><td><strong>JGC Security Manager</strong></td><td>Mr. Uchino – 0783 330 1043</td></tr><tr><td><strong>Security</strong></td><td>0781 133 3778 / 3779</td></tr><tr><td style='color:red'><strong>Fire Alert</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>HSE Phone</strong></td><td>0781 133 3772</td></tr><tr><td><strong>Ambulance</strong></td><td>0780 003 8584 / 0780 968 1117</td></tr><tr><td><strong>Doctor</strong></td><td>0780 003 6327</td></tr></table><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Emergency response poster, modern corporate style'</div>",
+                p22_body: "<table class='table-custom'><tr><td><strong>JGC Security Manager</strong></td><td>Mr. Uchino – 0783 330 1043</td></tr><tr><td><strong>Security</strong></td><td>0781 133 3778 / 3779</td></tr><tr><td style='color:red'><strong>Fire Alert</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>HSE Phone</strong></td><td>0781 133 3772</td></tr><tr><td><strong>Ambulance</strong></td><td>0780 003 8584 / 0780 968 1117</td></tr><tr><td><strong>Doctor</strong></td><td>0780 003 6327</td></tr></table>",
                 p23_title: "कैंप एडवाइजरी (दैनिक रिमाइंडर) 📢",
                 p23_body: "<ul><li><strong>बिजली बचत:</strong> कमरे में नहीं हों तो पावर बंद रखें।</li><li><strong>स्मोकिंग पॉलिसी:</strong> केवल निर्धारित स्मोकिंग शेल्टर उपयोग करें।</li><li><strong>टॉयलेट:</strong> खाना, टिशू या कचरा टॉयलेट में न डालें।</li><li><strong>हैंगर:</strong> उपयोग के बाद अतिरिक्त हैंगर कैंप ऑफिस में लौटाएं।</li><li><strong>स्पीड लिमिट:</strong> कैंप में धीरे चलाएं।</li><li><strong>चाबी नुकसान:</strong> रिप्लेसमेंट हेतु $30 फाइन।</li><li><strong>कुकिंग:</strong> Camp Manager की अनुमति बिना सख्त मना है।</li></ul>",
                 p24_title: "कैंप सुविधाएँ एवं बुकिंग 🎮",
                 p24_body: "<p>कैंप में सुविधा और मनोरंजन के लिए कई सुविधाएँ उपलब्ध हैं।</p><p><strong>समय:</strong><br>Weekday: 10:00 – 22:00<br>Friday / Holiday: 06:00 – 21:00</p><p><strong>उपलब्ध:</strong> Indoor Golf, Karaoke Room, PlayStation Zone, Healing Room, Carrom, Barber Shop, Mini Market, Sports Ground, Party Room, BBQ Area, Gym, Church, Mosque.</p><a href='http://10.174.139.142/mrbs/web/index.php' target='_blank' class='btn-link'>बुकिंग करें</a>",
                 p25_title: "मेंटेनेंस सपोर्ट 🛠️",
-                p25_body: "<p>मेंटेनेंस टीम निम्न कार्यों के लिए उपलब्ध है:</p><ul><li>Electrical Support</li><li>Plumbing Services</li><li>Carpentry Work</li></ul><p>समस्या तुरंत रिपोर्ट करें ताकि जल्दी समाधान हो और रहने में परेशानी न हो।</p>",
+                p25_body: "<p>मेंटेनेंस टीम निम्न कार्यों के लिए उपलब्ध है:</p><ul><li><strong>Manish:</strong> 0784 619 8821</li><li><strong>Misbah Ali:</strong> 0784 439 4881</li><li><strong>Electrician (Mr. James):</strong> 0783 577 1195</li><li><strong>Carpenter (Mr. YK Yoo):</strong> 0783 468 4057</li><li><strong>Plumber (Mr. SW Kim):</strong> 0783 577 0171</li></ul><p>समस्या तुरंत रिपोर्ट करें ताकि जल्दी समाधान हो और रहने में परेशानी न हो।</p>",
                 p26_title: "लॉन्ड्री सेवा 🧺",
                 p26_body: "<p>लॉन्ड्री सेवा प्रतिदिन उपलब्ध है। हर सुबह अपना लॉन्ड्री (यूनिफॉर्म, पर्सनल कपड़े, बेडिंग कवर) कमरे के सामने कॉरिडोर में रखें।</p><p><strong>कलेक्शन टाइम:</strong> 6 AM, 10 AM, 2 PM</p><p><strong>डिलीवरी:</strong> साफ कपड़े रोज 10 PM से पहले डिलीवर होंगे।</p>",
                 p27_title: "रूम क्लीनिंग सेवा 🧹",
@@ -421,7 +478,7 @@
                 p01_btn: "فتح الإرشادات",
                 p02_title: "جدول المحتويات",
                 p03_title: "رسالة ترحيب",
-                p03_body: "<p>مرحبًا بكم في معسكر المقاولين. هذا المعسكر هو منزلكم بعيدًا عن المنزل خلال مشروع تطوير مصفاة البصرة. هدفنا توفير بيئة سكنية آمنة ومنظمة ومنضبطة ومريحة لجميع المقيمين.</p><p>فريق المعسكر ملتزم بأعلى معايير السكن والخدمات والسلامة. تعاونكم في الالتزام بهذه القواعد والإرشادات ضروري. عندما يحترم كل مقيم النظام، يعمل المعسكر بسلاسة ويستفيد الجميع.</p><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Warm welcome message graphic, diverse workforce, professional camp background, safe environment'</div>",
+                p03_body: "<p>مرحبًا بكم في معسكر المقاولين. هذا المعسكر هو منزلكم بعيدًا عن المنزل خلال مشروع تطوير مصفاة البصرة. هدفنا توفير بيئة سكنية آمنة ومنظمة ومنضبطة ومريحة لجميع المقيمين.</p><p>فريق المعسكر ملتزم بأعلى معايير السكن والخدمات والسلامة. تعاونكم في الالتزام بهذه القواعد والإرشادات ضروري. عندما يحترم كل مقيم النظام، يعمل المعسكر بسلاسة ويستفيد الجميع.</p>",
                 p04_title: "الانضباط العام ومسؤوليات المقيمين",
                 p04_body: "<ul><li>المعسكر مجتمع سكني مشترك. الاحترام والانضباط والنظافة إلزامية.</li><li>يجب على المقيمين الالتزام بقواعد المعسكر داخل الغرف والممرات وصالات الطعام والترفيه وجميع الأماكن العامة.</li><li>سوء السلوك أو الشكاوى المتكررة أو المخالفات الجسيمة قد تؤدي إلى إجراءات تأديبية أو تقييد الامتيازات أو الإخلاء من المعسكر.</li></ul>",
                 p05_title: "الهوية، الدخول/الخروج والأمن 🛂",
@@ -437,7 +494,7 @@
                 p10_title: "ترشيد الكهرباء والتحكم في الطاقة ⚡",
                 p10_body: "<ul><li>ترشيد الكهرباء إلزامي.</li><li>أطفئ الأنوار والمكيف والشواحن والأجهزة عند عدم الاستخدام.</li><li>تجنب استهلاك الكهرباء غير الضروري داخل الغرف.</li><li>يمنع العبث بالأسلاك أو المقابس أو الأنظمة الكهربائية.</li></ul>",
                 p11_title: "قواعد السلامة من الحريق (سياسة صفر مخاطر) 🔥",
-                p11_body: "<ul><li>السلامة من الحريق مسؤولية الجميع.</li><li>يمنع العبث بكاشفات الدخان أو إنذارات الحريق أو الطفايات أو إنارة الطوارئ أو أي معدات سلامة.</li><li>لا تغلق مخارج الطوارئ أو السلالم أو طرق الوصول.</li><li>يمنع تخزين المواد القابلة للاشتعال داخل الغرف أو الممرات.</li><li>أبلغ فورًا عن أي خطر حريق أو رائحة احتراق أو شرر أو مشاكل كهربائية إلى مكتب المعسكر/الأمن.</li></ul><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Fire extinguisher and muster point signage, professional camp environment'</div>",
+                p11_body: "<ul><li>السلامة من الحريق مسؤولية الجميع.</li><li>يمنع العبث بكاشفات الدخان أو إنذارات الحريق أو الطفايات أو إنارة الطوارئ أو أي معدات سلامة.</li><li>لا تغلق مخارج الطوارئ أو السلالم أو طرق الوصول.</li><li>يمنع تخزين المواد القابلة للاشتعال داخل الغرف أو الممرات.</li><li>أبلغ فورًا عن أي خطر حريق أو رائحة احتراق أو شرر أو مشاكل كهربائية إلى مكتب المعسكر/الأمن.</li></ul>",
                 p12_title: "سياسة التدخين (منظمة بصرامة) 🚭",
                 p12_body: "<ul><li>التدخين مسموح فقط في أماكن التدخين المخصصة.</li><li>يمنع التدخين داخل الغرف والحمامات والممرات وجميع الأماكن المغلقة.</li><li>لا ترمِ أعقاب السجائر على الأرض، استخدم أماكن التخلص المخصصة.</li><li>سيتم التعامل بجدية مع المخالفات بسبب خطر الحريق.</li></ul>",
                 p13_title: "قواعد الطبخ (ممنوع بدون موافقة) 🍳❌",
@@ -457,15 +514,15 @@
                 p20_title: "إرشادات استلام الزي الرسمي 👕",
                 p20_body: "<p>بعد استلام مفتاح الغرفة: قم بتعبئة نموذج طلب الزي الرسمي. قدم مقاسات القميص والبنطال بدقة. سيتم إصدار الزي حسب المقاسات المقدمة.</p><table class='table-custom'><tr><th>Item</th><th>Sizes</th></tr><tr><td>Shirt (cm)</td><td>90 | 95 | 100 | 105 | 110</td></tr><tr><td>Pant</td><td>30 | 32 | 34 | 36 | 38</td></tr></table><p><strong>ملاحظات:</strong><br>وصول جديد: زوجان (02)<br>بعد سنة: زوج واحد (01)</p>",
                 p21_title: "جهات الاتصال للدعم (مكتب المساعدة) 📞",
-                p21_body: "<p><strong>مدير المعسكر:</strong> Minsoo Kim – 783 577 0133</p><p><strong>مسؤول المعسكر:</strong> Deepak Sharma – 786 477 7597</p><p><strong>موظف المكتب:</strong> Mahesh Pandey – 786 160 6036</p><p><strong>موظف المكتب:</strong> Pankaj – 784 888 9590</p><p>يرجى التواصل مع مكتب المعسكر للطلبات الرسمية والاستفسارات.</p>",
+                p21_body: "<p><strong>مدير المعسكر:</strong> Minsoo Kim – 783 577 0133</p><p><strong>مسؤول المعسكر:</strong> Deepak Sharma – 786 477 7597</p><p><strong>موظف المكتب:</strong> Mahesh Pandey – 786 160 6036</p><p><strong>موظف المكتب:</strong> Pankaj – 784 888 9590</p><p><strong>موظف المكتب:</strong> Aakash Mishra – 0787 008 1266</p><p>يرجى التواصل مع مكتب المعسكر للطلبات الرسمية والاستفسارات.</p>",
                 p22_title: "أرقام الطوارئ (هامة) 🚨",
-                p22_body: "<table class='table-custom'><tr><td><strong>مدير أمن JGC</strong></td><td>Mr. Uchino – 0783 330 1043</td></tr><tr><td><strong>الأمن</strong></td><td>0781 133 3778 / 3779</td></tr><tr><td style='color:red'><strong>إنذار الحريق</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>السلامة (HSE)</strong></td><td>0781 133 3772</td></tr><tr><td><strong>الإسعاف</strong></td><td>0780 003 8584 / 0780 968 1117</td></tr><tr><td><strong>طبيب العيادة</strong></td><td>0780 003 6327</td></tr></table><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Emergency response poster, modern corporate style'</div>",
+                p22_body: "<table class='table-custom'><tr><td><strong>مدير أمن JGC</strong></td><td>Mr. Uchino – 0783 330 1043</td></tr><tr><td><strong>الأمن</strong></td><td>0781 133 3778 / 3779</td></tr><tr><td style='color:red'><strong>إنذار الحريق</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>السلامة (HSE)</strong></td><td>0781 133 3772</td></tr><tr><td><strong>الإسعاف</strong></td><td>0780 003 8584 / 0780 968 1117</td></tr><tr><td><strong>طبيب العيادة</strong></td><td>0780 003 6327</td></tr></table>",
                 p23_title: "تنبيهات المعسكر اليومية 📢",
                 p23_body: "<ul><li><strong>ترشيد الكهرباء:</strong> أطفئ الكهرباء عند عدم وجودك في الغرفة.</li><li><strong>سياسة التدخين:</strong> التدخين فقط في أماكن التدخين المخصصة.</li><li><strong>المراحيض:</strong> لا ترمِ الطعام أو المناديل أو المخلفات داخل المرحاض.</li><li><strong>إعادة علاقات الغسيل:</strong> أعد العلاقات الإضافية إلى مكتب المعسكر.</li><li><strong>السرعة:</strong> قد ببطء داخل المعسكر.</li><li><strong>فقدان المفتاح:</strong> غرامة 30 دولار للاستبدال.</li><li><strong>الطبخ:</strong> ممنوع دون موافقة مدير المعسكر.</li></ul>",
                 p24_title: "مرافق المعسكر والحجز 🎮",
                 p24_body: "<p>يوفر المعسكر مرافق متعددة للراحة والترفيه.</p><p><strong>أوقات المرافق:</strong><br>أيام العمل: 10:00 – 22:00<br>الجمعة/العطل: 06:00 – 21:00</p><p><strong>المرافق المتاحة:</strong> Indoor Golf, Karaoke, PlayStation, Gym, Market, Barber, BBQ Area.</p><a href='http://10.174.139.142/mrbs/web/index.php' target='_blank' class='btn-link'>حجز المرافق</a>",
                 p25_title: "دعم الصيانة 🛠️",
-                p25_body: "<p>يوجد فريق صيانة مخصص للتعامل مع:</p><ul><li>الدعم الكهربائي</li><li>خدمات السباكة</li><li>أعمال النجارة</li></ul><p>يرجى الإبلاغ عن الأعطال فورًا لضمان المعالجة السريعة وراحة الإقامة.</p>",
+                p25_body: "<p>يوجد فريق صيانة مخصص للتعامل مع:</p><ul><li><strong>Manish:</strong> 0784 619 8821</li><li><strong>Misbah Ali:</strong> 0784 439 4881</li><li><strong>كهربائي (Mr. James):</strong> 0783 577 1195</li><li><strong>نجار (Mr. YK Yoo):</strong> 0783 468 4057</li><li><strong>سباك (Mr. SW Kim):</strong> 0783 577 0171</li></ul><p>يرجى الإبلاغ عن الأعطال فورًا لضمان المعالجة السريعة وراحة الإقامة.</p>",
                 p26_title: "خدمة الغسيل 🧺",
                 p26_body: "<p>خدمة الغسيل متوفرة يوميًا. ضع الغسيل (الزي الرسمي، الملابس الشخصية، أغطية السرير فقط) صباحًا أمام غرفتك في الممر.</p><p><strong>أوقات الجمع:</strong> 6 صباحًا، 10 صباحًا، 2 ظهرًا</p><p><strong>التسليم:</strong> قبل 10 مساءً يوميًا.</p>",
                 p27_title: "خدمة تنظيف الغرف 🧹",
@@ -496,7 +553,7 @@
                 p01_btn: "가이드라인 열기",
                 p02_title: "목차",
                 p03_title: "환영 인사",
-                p03_body: "<p>컨트랙터 캠프에 오신 것을 환영합니다. 본 캠프는 Basrah Refinery Upgrading Project 기간 동안 여러분의 제2의 집입니다. 우리의 목표는 모든 거주자에게 안전하고, 규율 있으며, 체계적이고, 편안한 생활 환경을 제공하는 것입니다.</p><p>캠프 팀은 숙소, 서비스, 안전의 높은 기준을 유지하기 위해 최선을 다하고 있습니다. 본 규정 및 가이드라인을 준수해 주시기 바랍니다. 모든 거주자가 규정을 존중하면 캠프 운영은 원활해지고 모두에게 도움이 됩니다.</p><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Warm welcome message graphic, diverse workforce, professional camp background, safe environment'</div>",
+                p03_body: "<p>컨트랙터 캠프에 오신 것을 환영합니다. 본 캠프는 Basrah Refinery Upgrading Project 기간 동안 여러분의 제2의 집입니다. 우리의 목표는 모든 거주자에게 안전하고, 규율 있으며, 체계적이고, 편안한 생활 환경을 제공하는 것입니다.</p><p>캠프 팀은 숙소, 서비스, 안전의 높은 기준을 유지하기 위해 최선을 다하고 있습니다. 본 규정 및 가이드라인을 준수해 주시기 바랍니다. 모든 거주자가 규정을 존중하면 캠프 운영은 원활해지고 모두에게 도움이 됩니다.</p>",
                 p04_title: "기본 규율 및 거주자 책임",
                 p04_body: "<ul><li>캠프는 공동 생활 공간입니다. 상호 존중, 규율, 위생은 필수입니다.</li><li>거주자는 객실, 복도, 식당, 휴게 공간 및 모든 공용 구역에서 규정을 준수해야 합니다.</li><li>문제 행동, 반복 민원, 중대한 위반 시 징계, 이용 제한, 퇴소 조치가 있을 수 있습니다.</li></ul>",
                 p05_title: "신분증, 출입 및 보안 🛂",
@@ -512,7 +569,7 @@
                 p10_title: "전력 절약 및 에너지 관리 ⚡",
                 p10_body: "<ul><li>전력 절약은 의무입니다.</li><li>사용하지 않을 때 조명/에어컨/충전기/전기기기 전원을 끄십시오.</li><li>객실 내 불필요한 전기 사용을 피하십시오.</li><li>전기 설비, 콘센트, 배선을 임의로 조작하지 마십시오.</li></ul>",
                 p11_title: "화재 안전 규정 (Zero Risk) 🔥",
-                p11_body: "<ul><li>화재 안전은 모두의 책임입니다.</li><li>연기감지기, 화재경보기, 소화기, 비상등 등 안전장비 조작 금지.</li><li>비상구, 계단, 통로를 막지 마십시오.</li><li>객실/복도에 인화성 물질 보관 금지.</li><li>불탄 냄새, 스파크, 화재 위험, 전기 문제 발견 시 즉시 캠프/보안에 보고하십시오.</li></ul><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Fire extinguisher and muster point signage, professional camp environment'</div>",
+                p11_body: "<ul><li>화재 안전은 모두의 책임입니다.</li><li>연기감지기, 화재경보기, 소화기, 비상등 등 안전장비 조작 금지.</li><li>비상구, 계단, 통로를 막지 마십시오.</li><li>객실/복도에 인화성 물질 보관 금지.</li><li>불탄 냄새, 스파크, 화재 위험, 전기 문제 발견 시 즉시 캠프/보안에 보고하십시오.</li></ul>",
                 p12_title: "흡연 규정 (엄격 관리) 🚭",
                 p12_body: "<ul><li>흡연은 지정된 흡연구역에서만 가능합니다.</li><li>객실/화장실/복도 및 모든 실내 금연입니다.</li><li>담배꽁초를 바닥에 버리지 마십시오. 지정 장소에 처리하십시오.</li><li>화재 위험으로 흡연 위반은 엄중 조치됩니다.</li></ul>",
                 p13_title: "취사 규정 (승인 없이 금지) 🍳❌",
@@ -532,15 +589,15 @@
                 p20_title: "유니폼 지급 안내 👕",
                 p20_body: "<p>객실 키 수령 후: 유니폼 신청서를 작성하십시오. 셔츠/바지 사이즈를 정확히 기재하십시오. 제출한 사이즈 기준으로 유니폼이 지급됩니다.</p><table class='table-custom'><tr><th>Item</th><th>Sizes</th></tr><tr><td>Shirt (cm)</td><td>90 | 95 | 100 | 105 | 110</td></tr><tr><td>Pant</td><td>30 | 32 | 34 | 36 | 38</td></tr></table><p><strong>비고:</strong><br>신규 입소: 2벌<br>1년 후: 1벌</p>",
                 p21_title: "캠프 지원 연락처 (헬프데스크) 📞",
-                p21_body: "<p><strong>캠프 매니저:</strong> Minsoo Kim – 783 577 0133</p><p><strong>캠프 인차지:</strong> Deepak Sharma – 786 477 7597</p><p><strong>사무실 직원:</strong> Mahesh Pandey – 786 160 6036</p><p><strong>사무실 직원:</strong> Pankaj – 784 888 9590</p><p>공식 요청 및 문의는 캠프 사무실로 연락하십시오.</p>",
+                p21_body: "<p><strong>캠프 매니저:</strong> Minsoo Kim – 783 577 0133</p><p><strong>캠프 인차지:</strong> Deepak Sharma – 786 477 7597</p><p><strong>사무실 직원:</strong> Mahesh Pandey – 786 160 6036</p><p><strong>사무실 직원:</strong> Pankaj – 784 888 9590</p><p><strong>사무실 직원:</strong> Aakash Mishra – 0787 008 1266</p><p>공식 요청 및 문의는 캠프 사무실로 연락하십시오.</p>",
                 p22_title: "긴급 연락처 (중요) 🚨",
-                p22_body: "<table class='table-custom'><tr><td><strong>JGC 보안 매니저</strong></td><td>Mr. Uchino – 0783 330 1043</td></tr><tr><td><strong>보안</strong></td><td>0781 133 3778 / 3779</td></tr><tr><td style='color:red'><strong>화재 신고</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>HSE</strong></td><td>0781 133 3772</td></tr><tr><td><strong>구급차</strong></td><td>0780 003 8584 / 0780 968 1117</td></tr><tr><td><strong>클리닉 의사</strong></td><td>0780 003 6327</td></tr></table><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Emergency response poster, modern corporate style'</div>",
+                p22_body: "<table class='table-custom'><tr><td><strong>JGC 보안 매니저</strong></td><td>Mr. Uchino – 0783 330 1043</td></tr><tr><td><strong>보안</strong></td><td>0781 133 3778 / 3779</td></tr><tr><td style='color:red'><strong>화재 신고</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>HSE</strong></td><td>0781 133 3772</td></tr><tr><td><strong>구급차</strong></td><td>0780 003 8584 / 0780 968 1117</td></tr><tr><td><strong>클리닉 의사</strong></td><td>0780 003 6327</td></tr></table>",
                 p23_title: "캠프 일상 안내 (리마인더) 📢",
                 p23_body: "<ul><li><strong>절전:</strong> 방에 없을 때 전원을 꺼주세요.</li><li><strong>흡연:</strong> 지정 흡연구역만 이용.</li><li><strong>화장실:</strong> 음식/티슈/쓰레기 투입 금지.</li><li><strong>옷걸이:</strong> 사용 후 추가 옷걸이 사무실 반납.</li><li><strong>속도 제한:</strong> 캠프 내 서행.</li><li><strong>키 분실:</strong> 교체 벌금 $30.</li><li><strong>취사:</strong> 매니저 승인 없이 금지.</li></ul>",
                 p24_title: "캠프 시설 및 예약 🎮",
                 p24_body: "<p>캠프는 편의와 휴식을 위한 다양한 시설을 제공합니다.</p><p><strong>이용 시간:</strong><br>평일: 10:00 – 22:00<br>금요일/휴일: 06:00 – 21:00</p><p><strong>이용 가능 시설:</strong> Indoor Golf, Karaoke, PlayStation, Gym, Market, Barber, BBQ Area 등.</p><a href='http://10.174.139.142/mrbs/web/index.php' target='_blank' class='btn-link'>시설 예약하기</a>",
                 p25_title: "유지보수 지원 🛠️",
-                p25_body: "<p>유지보수팀 지원 항목:</p><ul><li>전기 지원</li><li>배관 서비스</li><li>목공 작업</li></ul><p>문제 발생 시 즉시 보고하여 신속한 조치가 이루어지도록 해주세요.</p>",
+                p25_body: "<p>유지보수팀 지원 항목:</p><ul><li><strong>Manish:</strong> 0784 619 8821</li><li><strong>Misbah Ali:</strong> 0784 439 4881</li><li><strong>전기 (Mr. James):</strong> 0783 577 1195</li><li><strong>목공 (Mr. YK Yoo):</strong> 0783 468 4057</li><li><strong>배관 (Mr. SW Kim):</strong> 0783 577 0171</li></ul><p>문제 발생 시 즉시 보고하여 신속한 조치가 이루어지도록 해주세요.</p>",
                 p26_title: "세탁 서비스 🧺",
                 p26_body: "<p>매일 세탁 서비스 제공. 매일 아침 세탁물(유니폼, 개인 의류, 침구 커버만)을 객실 앞 복도에 두십시오.</p><p><strong>수거 시간:</strong> 오전 6시, 오전 10시, 오후 2시</p><p><strong>배달:</strong> 세탁물은 매일 오후 10시 이전에 전달됩니다.</p>",
                 p27_title: "객실 청소 서비스 🧹",
@@ -571,7 +628,7 @@
                 p01_btn: "ガイドラインを開く",
                 p02_title: "目次",
                 p03_title: "歓迎メッセージ",
-                p03_body: "<p>コントラクターキャンプへようこそ。本キャンプは Basrah Refinery Upgrading Project 期間中の「第二の住まい」です。私たちの目標は、すべての居住者にとって安全で規律があり、整った快適な生活環境を提供することです。</p><p>キャンプチームは宿泊・サービス・安全において高い基準を維持することに努めています。ルールとガイドラインへのご協力をお願いいたします。すべての居住者が規則を守ることで、キャンプ運営は円滑になり、皆にとって良い環境になります。</p><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Warm welcome message graphic, diverse workforce, professional camp background, safe environment'</div>",
+                p03_body: "<p>コントラクターキャンプへようこそ。本キャンプは Basrah Refinery Upgrading Project 期間中の「第二の住まい」です。私たちの目標は、すべての居住者にとって安全で規律があり、整った快適な生活環境を提供することです。</p><p>キャンプチームは宿泊・サービス・安全において高い基準を維持することに努めています。ルールとガイドラインへのご協力をお願いいたします。すべての居住者が規則を守ることで、キャンプ運営は円滑になり、皆にとって良い環境になります。</p>",
                 p04_title: "基本規律・居住者責任",
                 p04_body: "<ul><li>キャンプは共同生活の場です。尊重・規律・衛生は必須です。</li><li>居住者は部屋、廊下、食堂、娯楽エリア、すべての共用スペースで規則を守る必要があります。</li><li>不適切な行動、繰り返しの苦情、重大な違反は処分・利用制限・退去につながる場合があります。</li></ul>",
                 p05_title: "身分証・出入・セキュリティ 🛂",
@@ -587,7 +644,7 @@
                 p10_title: "節電・エネルギー管理 ⚡",
                 p10_body: "<ul><li>節電は必須です。</li><li>使用しない時は照明、エアコン、充電器などを必ずOFF。</li><li>室内での無駄な電力使用を避けてください。</li><li>配線・コンセントなど電気設備の改造は禁止。</li></ul>",
                 p11_title: "火災安全規則（ゼロリスク） 🔥",
-                p11_body: "<ul><li>防火は全員の責任です。</li><li>煙探知機、火災警報、消火器、非常灯など安全設備の改ざん禁止。</li><li>非常口、階段、通路を塞がない。</li><li>可燃物を部屋や廊下に保管しない。</li><li>焦げ臭い匂い、火花、火災リスク、電気異常は直ちに事務所/警備へ報告。</li></ul><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Fire extinguisher and muster point signage, professional camp environment'</div>",
+                p11_body: "<ul><li>防火は全員の責任です。</li><li>煙探知機、火災警報、消火器、非常灯など安全設備の改ざん禁止。</li><li>非常口、階段、通路を塞がない。</li><li>可燃物を部屋や廊下に保管しない。</li><li>焦げ臭い匂い、火花、火災リスク、電気異常は直ちに事務所/警備へ報告。</li></ul>",
                 p12_title: "喫煙規則（厳格管理） 🚭",
                 p12_body: "<ul><li>喫煙は指定喫煙所のみ。</li><li>部屋・トイレ・廊下など屋内は全面禁煙。</li><li>吸い殻のポイ捨て禁止。指定場所に捨ててください。</li><li>火災リスクのため違反は厳正に対応します。</li></ul>",
                 p13_title: "調理規則（許可なし禁止） 🍳❌",
@@ -607,15 +664,15 @@
                 p20_title: "ユニフォーム支給案内 👕",
                 p20_body: "<p>部屋の鍵を受け取った後: ユニフォーム申請書を記入。シャツ/パンツのサイズを正確に記載。申請サイズに基づき支給されます。</p><table class='table-custom'><tr><th>Item</th><th>Sizes</th></tr><tr><td>Shirt (cm)</td><td>90 | 95 | 100 | 105 | 110</td></tr><tr><td>Pant</td><td>30 | 32 | 34 | 36 | 38</td></tr></table><p><strong>備考:</strong><br>新規入所: 2セット<br>1年後: 1セット</p>",
                 p21_title: "サポート連絡先（ヘルプデスク） 📞",
-                p21_body: "<p><strong>キャンプマネージャー:</strong> Minsoo Kim – 783 577 0133</p><p><strong>キャンプ担当:</strong> Deepak Sharma – 786 477 7597</p><p><strong>事務スタッフ:</strong> Mahesh Pandey – 786 160 6036</p><p><strong>事務スタッフ:</strong> Pankaj – 784 888 9590</p><p>公式な依頼・確認はキャンプ事務所へ連絡してください。</p>",
+                p21_body: "<p><strong>キャンプマネージャー:</strong> Minsoo Kim – 783 577 0133</p><p><strong>キャンプ担当:</strong> Deepak Sharma – 786 477 7597</p><p><strong>事務スタッフ:</strong> Mahesh Pandey – 786 160 6036</p><p><strong>事務スタッフ:</strong> Pankaj – 784 888 9590</p><p><strong>事務スタッフ:</strong> Aakash Mishra – 0787 008 1266</p><p>公式な依頼・確認はキャンプ事務所へ連絡してください。</p>",
                 p22_title: "緊急連絡先（重要） 🚨",
-                p22_body: "<table class='table-custom'><tr><td><strong>JGCセキュリティ</strong></td><td>Mr. Uchino – 0783 330 1043</td></tr><tr><td><strong>セキュリティ</strong></td><td>0781 133 3778 / 3779</td></tr><tr><td style='color:red'><strong>火災通報</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>HSE</strong></td><td>0781 133 3772</td></tr><tr><td><strong>救急車</strong></td><td>0780 003 8584 / 0780 968 1117</td></tr><tr><td><strong>クリニック医師</strong></td><td>0780 003 6327</td></tr></table><div class='ai-placeholder'>AI_IMAGE_PROMPT: 'Emergency response poster, modern corporate style'</div>",
+                p22_body: "<table class='table-custom'><tr><td><strong>JGCセキュリティ</strong></td><td>Mr. Uchino – 0783 330 1043</td></tr><tr><td><strong>セキュリティ</strong></td><td>0781 133 3778 / 3779</td></tr><tr><td style='color:red'><strong>火災通報</strong></td><td style='color:red'>0783 577 0552</td></tr><tr><td><strong>HSE</strong></td><td>0781 133 3772</td></tr><tr><td><strong>救急車</strong></td><td>0780 003 8584 / 0780 968 1117</td></tr><tr><td><strong>クリニック医師</strong></td><td>0780 003 6327</td></tr></table>",
                 p23_title: "日常注意事項（リマインダー） 📢",
                 p23_body: "<ul><li><strong>節電:</strong> 部屋にいない時は電源OFF。</li><li><strong>喫煙:</strong> 指定喫煙所のみ。</li><li><strong>トイレ:</strong> 食べ物/ティッシュ/ゴミを流さない。</li><li><strong>ハンガー:</strong> 余分は事務所へ返却。</li><li><strong>速度:</strong> キャンプ内は低速。</li><li><strong>鍵紛失:</strong> 交換罰金30ドル。</li><li><strong>調理:</strong> 許可なしは禁止。</li></ul>",
                 p24_title: "施設案内・予約 🎮",
                 p24_body: "<p>キャンプには快適さと娯楽のための施設があります。</p><p><strong>利用時間:</strong><br>平日: 10:00 – 22:00<br>金曜/休日: 06:00 – 21:00</p><p><strong>利用可能施設:</strong> Indoor Golf, Karaoke, PlayStation, Healing Room, Barber, Mini Market, Gym, BBQ, Church, Mosque.</p><a href='http://10.174.139.142/mrbs/web/index.php' target='_blank' class='btn-link'>施設予約</a>",
                 p25_title: "メンテナンス支援 🛠️",
-                p25_body: "<p>メンテナンス対応:</p><ul><li>電気サポート</li><li>配管サービス</li><li>大工作業</li></ul><p>不具合は速やかに報告し、迅速な対応にご協力ください。</p>",
+                p25_body: "<p>メンテナンス対応:</p><ul><li><strong>Manish:</strong> 0784 619 8821</li><li><strong>Misbah Ali:</strong> 0784 439 4881</li><li><strong>電気 (Mr. James):</strong> 0783 577 1195</li><li><strong>大工 (Mr. YK Yoo):</strong> 0783 468 4057</li><li><strong>配管 (Mr. SW Kim):</strong> 0783 577 0171</li></ul><p>不具合は速やかに報告し、迅速な対応にご協力ください。</p>",
                 p26_title: "ランドリーサービス 🧺",
                 p26_body: "<p>毎日ランドリーサービスがあります。毎朝、洗濯物（制服、私服、寝具カバーのみ）を部屋前の廊下に置いてください。</p><p><strong>回収時間:</strong> 6時、10時、14時</p><p><strong>配達:</strong> 毎日 22時前 に返却されます。</p>",
                 p27_title: "清掃サービス 🧹",
@@ -683,10 +740,15 @@
         }
 
         function getPageHTML(pageIndex) {
-            let k = (pageIndex + 1).toString().padStart(2, '0');
+            let pageNum = pageIndex + 1;
+            let k = pageNum.toString().padStart(2, '0');
             let contentKey = `p${k}_body`;
             let titleKey = `p${k}_title`;
             
+            // Get Image for this Page (if any)
+            let imgUrl = PAGE_IMAGES[pageNum];
+            let imageHTML = imgUrl ? `<img src="${imgUrl}" class="page-image" alt="Section Image">` : "";
+
             // Cover
             if (pageIndex === 0) { 
                 return `<div class="cover-container">
@@ -709,6 +771,7 @@
                         </select>
                         <button class="nav-btn" onclick="turnPage(1)" data-i18n="p01_btn">${TEXT.en.p01_btn}</button>
                     </div>
+                    ${imageHTML}
                 </div>`;
             }
 
@@ -720,7 +783,7 @@
                     // Link to Page i
                     links += `<li><span onclick="jumpToPage(${i})">${i}. <span data-i18n="${key}">...</span></span></li>`;
                 }
-                return `${createHeader(pageIndex)}<div class="page-body"><h1 data-i18n="p02_title">${TEXT.en.p02_title}</h1><ul class="index-list">${links}</ul></div>${createFooter(pageIndex)}`;
+                return `${createHeader(pageIndex)}<div class="page-body"><h1 data-i18n="p02_title">${TEXT.en.p02_title}</h1><ul class="index-list">${links}</ul>${imageHTML}</div>${createFooter(pageIndex)}`;
             }
 
             // Back Cover
@@ -734,6 +797,7 @@
                     <a href="https://raw.githubusercontent.com/mrbharadvaja/contractorcamp/main/images/Camplayout.png" target="_blank" class="btn-link" data-i18n="btn_layout">Layout Image</a>
                     <a href="https://1drv.ms/b/c/914d6cd9be74140f/IQAPFHS-2WxNIICRKVIAAAAAAWFOF0T3ExpXg0RwEx8HkY8?e=1rbeqx" target="_blank" class="btn-link" data-i18n="btn_pdf">Download PDF</a>
                     <button class="nav-btn" style="margin-top:20px; width:100%" onclick="jumpToPage(1)" data-i18n="p31_btn_home">Home</button>
+                    ${imageHTML}
                  </div>${createFooter(pageIndex)}`;
             }
 
@@ -742,6 +806,7 @@
             <div class="page-body">
                 <h1 data-i18n="${titleKey}">...</h1>
                 <div data-i18n="${contentKey}">...</div>
+                ${imageHTML}
             </div>
             ${createFooter(pageIndex)}`;
         }
